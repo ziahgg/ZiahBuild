@@ -25,8 +25,8 @@ npm run build      # type-checks, then outputs static files to dist/
 npm run preview    # serves dist/ locally
 ```
 
-`vite.config.ts` uses `base: './'` (relative asset URLs), so the same build works on
-`https://<user>.github.io/<repo>/`, a user page, or a custom domain without changes.
+Production builds use `base: '/ZiahBuild/'` (set in `vite.config.ts`), matching the GitHub Pages URL
+**https://ziahgg.github.io/ZiahBuild/**. The dev server still runs at `/`.
 
 ## Deploy to GitHub Pages
 
@@ -36,7 +36,8 @@ npm run preview    # serves dist/ locally
    You can also run it manually from the **Actions** tab.
 
 **Custom domain:** add a file `public/CNAME` containing your domain (e.g. `ziahbuild.com`),
-configure the DNS records GitHub describes, and set the domain under **Settings → Pages**.
+change the build `base` in `vite.config.ts` to `'/'`, configure the DNS records GitHub describes,
+and set the domain under **Settings → Pages**.
 
 ## Editing content
 

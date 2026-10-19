@@ -1,0 +1,84 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/inter';
+
+/*
+ * Design tokens. The palette is intentionally limited to the three brand
+ * colors; every grey in the UI is an opacity variation of black or white
+ * (e.g. `text-black/40`, `bg-white/10`).
+ */
+@theme {
+  --color-*: initial;
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-blue: #1463ff;
+  --color-transparent: transparent;
+  --color-current: currentColor;
+
+  --font-sans: 'Inter Variable', 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --animate-marquee: marquee 38s linear infinite;
+
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 6rem;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-white font-sans text-black antialiased;
+    font-feature-settings: 'cv11', 'ss01';
+    overflow-x: clip;
+  }
+
+  ::selection {
+    @apply bg-blue text-white;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-blue);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+}
+
+@layer components {
+  /* Large display headlines: tight tracking, two-tone lines. */
+  .display {
+    @apply font-semibold tracking-[-0.045em] leading-[0.98];
+  }
+
+  /* Dotted canvas used behind design/code compositions. */
+  .dot-grid {
+    background-image: radial-gradient(currentColor 1px, transparent 1px);
+    background-size: 18px 18px;
+  }
+
+  .fade-x {
+    mask-image: linear-gradient(to right, transparent, #000 14%, #000 86%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
