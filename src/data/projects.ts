@@ -1,5 +1,6 @@
 import type { Project } from '../types'
 import { socialMediaDesigns, websiteDesigns } from './designProjects'
+import { developmentProjects } from './developmentProjects'
 
 /**
  * Featured projects — shown on the homepage, on each service's "View work"
@@ -58,7 +59,7 @@ export const projects: Project[] = [
     name: 'LuxeStay LA',
     category: 'Furnished Apartment Website',
     kind: 'Personal project',
-    services: ['websites'],
+    services: [],
     description:
       'A premium furnished-apartment website with an elevated hospitality aesthetic and a resident dashboard experience.',
     overview:
@@ -101,7 +102,7 @@ export const projects: Project[] = [
 ]
 
 /** Every project with its own page: featured projects plus the design case studies. */
-export const allProjects: Project[] = [...projects, ...websiteDesigns, ...socialMediaDesigns]
+export const allProjects: Project[] = [...projects, ...websiteDesigns, ...socialMediaDesigns, ...developmentProjects]
 
 export const getProject = (slug: string) => allProjects.find((p) => p.slug === slug)
 

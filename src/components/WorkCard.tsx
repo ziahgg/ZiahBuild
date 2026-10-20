@@ -27,7 +27,7 @@ export function WorkCard({ project, index }: { project: Project; index: number }
         <h3 className="mt-2.5 text-[clamp(1.35rem,2vw,1.75rem)] font-semibold leading-tight tracking-[-0.03em] transition-colors group-hover:text-blue">
           {project.name}
         </h3>
-        <p className="mt-1 text-sm font-medium text-black/45">{project.scope?.join(' · ') ?? project.category}</p>
+        <p className="mt-1 text-sm font-medium text-black/45">{project.industry ?? project.scope?.join(' · ') ?? project.category}</p>
         <p className="mt-3 max-w-xl text-[15px] leading-relaxed text-black/65">{project.description}</p>
         <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-blue">
           View case study <Swoosh className="size-4 transition-transform group-hover:translate-x-0.5" />

@@ -34,7 +34,7 @@ export function ServiceWorkPage({ service }: { service: Service }) {
                 <br />
                 <span className="text-black/30">Selected Work.</span>
               </h1>
-              <p className="mt-6 max-w-xl text-[15px] leading-relaxed text-black/60 sm:text-base">{service.description}</p>
+              <p className="mt-6 max-w-xl text-[15px] leading-relaxed text-black/60 sm:text-base">{service.intro ?? service.description}</p>
             </div>
             <span className="hidden size-28 place-items-center rounded-[22px] bg-blue text-white md:grid">
               <Icon aria-hidden="true" className="size-12" strokeWidth={1.6} />

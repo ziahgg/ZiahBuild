@@ -1,14 +1,21 @@
-import { ArrowLeft, ArrowRight, ArrowUpRight, Frame, Globe, Lightbulb, SearchCheck } from 'lucide-react'
+import { ArrowLeft, ArrowRight, ArrowUpRight, Code2, Frame, Globe, Lightbulb, PenTool, SearchCheck } from 'lucide-react'
 import { ButtonLink } from '../components/ButtonLink'
 import { Container } from '../components/Container'
 import { Eyebrow } from '../components/Eyebrow'
 import { MediaFrame } from '../components/MediaFrame'
-import { projects, projectsForService } from '../data/projects'
+import { allProjects, getProject, projects, projectsForService } from '../data/projects'
 import { getService } from '../data/services'
 import { routes } from '../routes'
 import type { Project } from '../types'
 
-type LinkItem = { label: string; href: string; icon: typeof Frame; variant: 'primary' | 'dark' | 'outline' }
+type LinkItem = {
+  label: string
+  href: string
+  icon: typeof Frame
+  variant: 'primary' | 'dark' | 'outline'
+  /** Links to another page of this site (same tab). */
+  internal?: boolean
+}
 
 export function ProjectPage({ project }: { project: Project }) {
   const primaryService = getService(project.services[0])
@@ -20,10 +27,32 @@ export function ProjectPage({ project }: { project: Project }) {
   const backHref = primaryService ? routes.service(primaryService.slug) : '#projects'
   const backLabel = primaryService ? primaryService.title : 'All projects'
   const hasImage = Boolean(project.media.image)
+  // Cross-links between a Figma design case study and the live website built from it.
+  const designStudy = project.designCaseStudy ? getProject(project.designCaseStudy) : undefined
+  const liveBuild = allProjects.find((p) => p.designCaseStudy === project.slug)
 
   const links = [
-    project.figmaUrl && { label: 'View Figma Design', href: project.figmaUrl, icon: Frame, variant: 'primary' },
-    project.liveUrl && { label: 'Visit Website', href: project.liveUrl, icon: Globe, variant: 'dark' },
+    project.liveUrl && { label: 'View Live Website', href: project.liveUrl, icon: Globe, variant: 'primary' },
+    project.figmaUrl && {
+      label: 'View Figma Design',
+      href: project.figmaUrl,
+      icon: Frame,
+      variant: project.liveUrl ? 'dark' : 'primary',
+    },
+    designStudy && {
+      label: 'Design case study',
+      href: routes.project(designStudy.slug),
+      icon: PenTool,
+      variant: 'outline',
+      internal: true,
+    },
+    liveBuild && {
+      label: 'Live build case study',
+      href: routes.project(liveBuild.slug),
+      icon: Code2,
+      variant: 'outline',
+      internal: true,
+    },
     project.githubUrl && { label: 'GitHub', href: project.githubUrl, icon: ArrowUpRight, variant: 'outline' },
     project.caseStudyUrl && { label: 'Case study', href: project.caseStudyUrl, icon: ArrowUpRight, variant: 'outline' },
   ].filter(Boolean) as LinkItem[]
@@ -43,12 +72,12 @@ export function ProjectPage({ project }: { project: Project }) {
             <h1
               id="project-title"
               className={`display mt-5 max-w-5xl ${
-                project.name.length > 24 ? 'text-[clamp(2.25rem,5vw,4.25rem)]' : 'text-[clamp(2.75rem,7vw,6rem)]'
+                Math.max(project.name.length, (project.industry ?? project.category).length) > 24 ? 'text-[clamp(2.25rem,5vw,4.25rem)]' : 'text-[clamp(2.75rem,7vw,6rem)]'
               }`}
             >
               {project.name}
               <br />
-              <span className="text-black/30">{project.category}</span>
+              <span className="text-black/30">{project.industry ?? project.category}</span>
             </h1>
           </div>
         </Container>
@@ -94,6 +123,7 @@ export function ProjectPage({ project }: { project: Project }) {
             <aside className="lg:sticky lg:top-28 lg:self-start">
               <dl className="divide-y divide-black/10 border-y border-black/10 text-sm">
                 {project.brand && <Meta term="Brand">{project.brand}</Meta>}
+                {project.industry && <Meta term="Industry">{project.industry}</Meta>}
                 <Meta term="Type">{project.kind}</Meta>
                 <Meta term="Service">
                   <ul className="flex flex-wrap justify-end gap-1.5">
@@ -114,6 +144,14 @@ export function ProjectPage({ project }: { project: Project }) {
                 </Meta>
                 {project.scope && <Meta term="Scope">{project.scope.join(' · ')}</Meta>}
                 {project.technologies.length > 0 && <Meta term="Technologies">{project.technologies.join(', ')}</Meta>}
+                {project.liveUrl && (
+                  <Meta term="Live site">
+                    <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="break-all hover:text-blue">
+                      {project.liveUrl.replace(/^https?:\/\//, '').replace(/\/$/, '')}
+                      <span className="sr-only"> (opens in a new tab)</span>
+                    </a>
+                  </Meta>
+                )}
               </dl>
             </aside>
 
@@ -176,13 +214,56 @@ export function ProjectPage({ project }: { project: Project }) {
                   </ol>
                 </div>
               )}
+
+              {project.highlights && project.highlights.length > 0 && (
+                <div className="mt-16">
+                  <h2 className="display text-[clamp(1.75rem,3vw,2.5rem)]">
+                    Design &amp; development
+                    <span className="text-black/30"> highlights.</span>
+                  </h2>
+                  <ol className="mt-8 grid gap-3 md:grid-cols-2">
+                    {project.highlights.map((h, i) => (
+                      <li key={h.title} className="rounded-[22px] bg-black/[0.035] p-6">
+                        <span className="text-xs tabular-nums text-blue">{String(i + 1).padStart(2, '0')}</span>
+                        <h3 className="mt-3 text-base font-semibold tracking-tight">{h.title}</h3>
+                        <p className="mt-2 text-sm leading-relaxed text-black/65">{h.text}</p>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              )}
             </div>
           </div>
         </Container>
       </section>
 
+      {/* Live website CTA */}
+      {project.liveUrl && (
+        <section aria-labelledby="live-cta" className="pb-14">
+          <Container>
+            <div className="flex flex-col items-start justify-between gap-6 rounded-[22px] bg-blue p-6 text-white sm:flex-row sm:items-center sm:p-10">
+              <div>
+                <p className="text-[11px] uppercase tracking-[0.08em] text-white/70">Live website</p>
+                <h2 id="live-cta" className="display mt-3 text-[clamp(1.75rem,3.5vw,2.75rem)]">
+                  See {project.name} live.
+                </h2>
+                <p className="mt-2 max-w-lg text-sm text-white/75">
+                  Explore the published site on GitHub Pages — the interactions described above work in the browser.
+                </p>
+              </div>
+              <ButtonLink href={project.liveUrl} variant="light" size="lg" icon={false} target="_blank" rel="noopener noreferrer">
+                <Globe className="size-5" />
+                View Live Website
+                <ArrowUpRight className="size-4" />
+                <span className="sr-only">(opens in a new tab)</span>
+              </ButtonLink>
+            </div>
+          </Container>
+        </section>
+      )}
+
       {/* Figma CTA */}
-      {project.figmaUrl && (
+      {project.figmaUrl && !project.liveUrl && (
         <section aria-labelledby="figma-cta" className="pb-14">
           <Container>
             <div className="flex flex-col items-start justify-between gap-6 rounded-[22px] bg-blue p-6 text-white sm:flex-row sm:items-center sm:p-10">
@@ -256,13 +337,21 @@ export function ProjectPage({ project }: { project: Project }) {
 function ProjectLinks({ links }: { links: LinkItem[] }) {
   return (
     <div className="flex shrink-0 flex-wrap gap-2.5">
-      {links.map(({ label, href, icon: Icon, variant }) => (
-        <ButtonLink key={label} href={href} variant={variant} icon={false} target="_blank" rel="noreferrer">
-          <Icon className="size-4" />
-          {label}
-          <span className="sr-only">(opens in a new tab)</span>
-        </ButtonLink>
-      ))}
+      {links.map(({ label, href, icon: Icon, variant, internal }) =>
+        internal ? (
+          <ButtonLink key={label} href={href} variant={variant} icon={false}>
+            <Icon className="size-4" />
+            {label}
+          </ButtonLink>
+        ) : (
+          <ButtonLink key={label} href={href} variant={variant} icon={false} target="_blank" rel="noopener noreferrer">
+            <Icon className="size-4" />
+            {label}
+            <ArrowUpRight className="size-3.5" />
+            <span className="sr-only">(opens in a new tab)</span>
+          </ButtonLink>
+        ),
+      )}
     </div>
   )
 }

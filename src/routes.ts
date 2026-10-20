@@ -18,7 +18,7 @@ export const routes = {
 export function parseHash(hash: string): Route {
   const service = hash.match(/^#\/services\/([\w-]+)\/?$/)
   if (service) return { name: 'service', slug: service[1] }
-  const project = hash.match(/^#\/work\/([\w-]+)\/?$/)
+  const project = hash.match(/^#\/work\/([\w-]+(?:\/[\w-]+)?)\/?$/)
   if (project) return { name: 'project', slug: project[1] }
   const anchor = hash.replace(/^#\/?/, '')
   return { name: 'home', anchor: anchor || undefined }

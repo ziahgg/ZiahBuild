@@ -52,7 +52,9 @@ export const services: Service[] = [
     title: 'Website Design & Development',
     shortTitle: 'Websites',
     description:
-      'Business websites, landing pages, SaaS marketing websites, portfolio websites, and end-to-end implementation.',
+      'Business websites, landing pages, SaaS marketing websites, and end-to-end implementation — designed in Figma, built and published live.',
+    intro:
+      'Real websites for ten different industries — each designed in Figma, built with React, TypeScript and Tailwind CSS, and published live on GitHub Pages. Open a case study to see the problem, the solution and how it was built.',
     icon: MonitorSmartphone,
   },
 ]

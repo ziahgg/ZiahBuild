@@ -47,6 +47,8 @@ export interface Project {
   services: ServiceSlug[]
   /** Brand name shown in the design, e.g. "AERIS". */
   brand?: string
+  /** Industry, shown under the title on live-website case studies. */
+  industry?: string
   /** Deliverables, e.g. ["Desktop", "Mobile"] or ["Carousels", "Posts", "Reels"]. */
   scope?: string[]
   /** Longer introduction on the project page. */
@@ -61,6 +63,10 @@ export interface Project {
   solution?: string
   /** Key design decisions shown on the project page. */
   considerations?: { title: string; text: string }[]
+  /** Verified design & development highlights (live-website case studies). */
+  highlights?: { title: string; text: string }[]
+  /** Slug of the matching Figma design case study, if any. */
+  designCaseStudy?: string
   /** Only list technologies that were actually used. */
   technologies: string[]
   figmaUrl?: string
@@ -75,6 +81,8 @@ export interface Service {
   title: string
   shortTitle: string
   description: string
+  /** Optional introduction shown on the service's collection page. */
+  intro?: string
   icon: LucideIcon
 }
 
