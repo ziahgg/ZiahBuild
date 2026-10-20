@@ -1,12 +1,11 @@
-import { ArrowUpRight } from 'lucide-react'
+import { ArrowUpRight, Mail, MessageCircle, Phone } from 'lucide-react'
 import { ButtonLink } from '../components/ButtonLink'
 import { Container } from '../components/Container'
 import { Eyebrow } from '../components/Eyebrow'
 import { Swoosh } from '../components/Swoosh'
-import { mailto, site } from '../data/site'
+import { mailto, site, tel, whatsappLink } from '../data/site'
 
 export function Contact() {
-  const hasEmail = Boolean(site.email)
   return (
     <section id="contact" aria-labelledby="contact-title" className="pb-3">
       <Container>
@@ -23,37 +22,59 @@ export function Contact() {
             turn your next idea into something real.
           </p>
 
-          {hasEmail ? (
-            <div className="mt-10 flex flex-wrap gap-3">
-              <ButtonLink href={mailto('New project enquiry')} size="lg">
-                Start a Project
-              </ButtonLink>
-              <ButtonLink href={mailto()} size="lg" variant="light">
-                Get in Touch
-              </ButtonLink>
-            </div>
-          ) : (
-            import.meta.env.DEV && (
-              <p className="mt-10 max-w-md rounded-xl border border-dashed border-white/30 p-4 text-sm text-white/60">
-                Dev note: set <code className="text-white">email</code> in <code className="text-white">src/data/site.ts</code>{' '}
-                to show the “Start a Project” and “Get in Touch” buttons. This note is hidden in production.
-              </p>
-            )
-          )}
+          <div className="mt-10 flex flex-wrap gap-3">
+            <ButtonLink {...whatsappLink} size="lg">
+              Start a Project
+              <span className="sr-only"> (opens WhatsApp in a new tab)</span>
+            </ButtonLink>
+            <ButtonLink {...whatsappLink} size="lg" variant="light">
+              Get in Touch
+              <span className="sr-only"> (opens WhatsApp in a new tab)</span>
+            </ButtonLink>
+          </div>
 
-          {(hasEmail || site.socials.length > 0) && (
-            <div className="mt-14 flex flex-wrap items-center gap-x-8 gap-y-3 border-t border-white/15 pt-6 text-sm">
-              {hasEmail && (
-                <a href={mailto()} className="text-white/80 underline-offset-4 hover:text-blue hover:underline">
+          <dl className="mt-14 grid gap-6 border-t border-white/15 pt-6 text-sm sm:grid-cols-3">
+            <div>
+              <dt className="text-[11px] uppercase tracking-[0.08em] text-white/45">Email</dt>
+              <dd className="mt-2">
+                <a href={mailto()} className="inline-flex items-center gap-2 break-all text-white/85 underline-offset-4 hover:text-blue hover:underline">
+                  <Mail aria-hidden="true" className="size-4 shrink-0" />
                   {site.email}
                 </a>
-              )}
+              </dd>
+            </div>
+            <div>
+              <dt className="text-[11px] uppercase tracking-[0.08em] text-white/45">Phone</dt>
+              <dd className="mt-2">
+                <a href={tel()} className="inline-flex items-center gap-2 text-white/85 underline-offset-4 hover:text-blue hover:underline">
+                  <Phone aria-hidden="true" className="size-4 shrink-0" />
+                  {site.phone}
+                </a>
+              </dd>
+            </div>
+            <div>
+              <dt className="text-[11px] uppercase tracking-[0.08em] text-white/45">WhatsApp</dt>
+              <dd className="mt-2">
+                <a
+                  {...whatsappLink}
+                  className="inline-flex items-center gap-2 text-white/85 underline-offset-4 hover:text-blue hover:underline"
+                >
+                  <MessageCircle aria-hidden="true" className="size-4 shrink-0" />
+                  Chat on WhatsApp <ArrowUpRight aria-hidden="true" className="size-4" />
+                  <span className="sr-only"> (opens in a new tab)</span>
+                </a>
+              </dd>
+            </div>
+          </dl>
+
+          {site.socials.length > 0 && (
+            <div className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-3 text-sm">
               {site.socials.map((s) => (
                 <a
                   key={s.href}
                   href={s.href}
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
                   className="inline-flex items-center gap-1 text-white/80 hover:text-blue"
                 >
                   {s.label} <ArrowUpRight className="size-4" />

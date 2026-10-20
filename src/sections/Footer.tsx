@@ -1,5 +1,5 @@
 import { Container } from '../components/Container'
-import { navLinks, site } from '../data/site'
+import { mailto, navLinks, site, tel, whatsappLink } from '../data/site'
 
 export function Footer() {
   return (
@@ -25,13 +25,32 @@ export function Footer() {
               ))}
             </ul>
           </nav>
+          <div>
+            <p className="text-[11px] uppercase tracking-[0.08em] text-black/45">Contact</p>
+            <ul className="mt-4 space-y-2 text-sm">
+              <li>
+                <a href={mailto()} className="break-all text-black/75 hover:text-blue">
+                  {site.email}
+                </a>
+              </li>
+              <li>
+                <a href={tel()} className="text-black/75 hover:text-blue">
+                  {site.phone}
+                </a>
+              </li>
+              <li>
+                <a {...whatsappLink} className="text-black/75 hover:text-blue">
+                  WhatsApp<span className="sr-only"> (opens in a new tab)</span>
+                </a>
+              </li>
+            </ul>
           {site.socials.length > 0 && (
-            <div>
+            <div className="mt-8">
               <p className="text-[11px] uppercase tracking-[0.08em] text-black/45">Elsewhere</p>
               <ul className="mt-4 space-y-2 text-sm">
                 {site.socials.map((s) => (
                   <li key={s.href}>
-                    <a href={s.href} target="_blank" rel="noreferrer" className="text-black/75 hover:text-blue">
+                    <a href={s.href} target="_blank" rel="noopener noreferrer" className="text-black/75 hover:text-blue">
                       {s.label}
                     </a>
                   </li>
@@ -39,6 +58,7 @@ export function Footer() {
               </ul>
             </div>
           )}
+          </div>
         </div>
         <div className="mt-14 flex flex-col justify-between gap-2 border-t border-black/10 pt-6 text-xs text-black/45 sm:flex-row">
           <p>© {new Date().getFullYear()} ZiahBuild. All rights reserved.</p>

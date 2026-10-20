@@ -7,6 +7,7 @@ import { TechnicalSections } from '../components/TechnicalSections'
 import { VideoSections } from '../components/VideoSections'
 import { allProjects, getProject, projects, projectsForService } from '../data/projects'
 import { getService } from '../data/services'
+import { whatsappLink } from '../data/site'
 import { routes } from '../routes'
 import type { Project } from '../types'
 
@@ -308,8 +309,8 @@ export function ProjectPage({ project }: { project: Project }) {
                   <ArrowUpRight className="size-4" />
                   <span className="sr-only">(opens in a new tab)</span>
                 </ButtonLink>
-                <ButtonLink href="#contact" variant="light" size="lg">
-                  Discuss a Project
+                <ButtonLink {...whatsappLink} variant="light" size="lg">
+                  Discuss a Project<span className="sr-only"> (opens WhatsApp in a new tab)</span>
                 </ButtonLink>
               </div>
             </div>
@@ -339,8 +340,8 @@ export function ProjectPage({ project }: { project: Project }) {
                   <ArrowUpRight className="size-4" />
                   <span className="sr-only">(opens in a new tab)</span>
                 </ButtonLink>
-                <ButtonLink href="#contact" variant="light" size="lg">
-                  Discuss a Project
+                <ButtonLink {...whatsappLink} variant="light" size="lg">
+                  Discuss a Project<span className="sr-only"> (opens WhatsApp in a new tab)</span>
                 </ButtonLink>
               </div>
             </div>

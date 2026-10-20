@@ -55,8 +55,10 @@ All content lives in `src/data/` — components don't need to change.
 | `src/data/shopifyProjects.ts` | Shopify Website Design projects (Sheps Farm) |
 | `src/data/showcase.ts` | UI/UX, web, social and Shopify galleries |
 
-- **Email / socials** — set `site.email` and `site.socials`. Contact buttons and links only appear once
-  these are filled in (no dead buttons).
+- **Contact** — `site.email`, `site.phone` and `site.whatsappUrl` in `src/data/site.ts`. Every contact
+  button (Let's Talk, Let's Work Together, Work With Me, Start a Project, Get in Touch, Discuss a Project)
+  opens the WhatsApp link; the email and phone appear as `mailto:` / `tel:` links in the Contact section
+  and footer. Add profiles to `site.socials` to show them too.
 - **CV** — put the PDF in `public/` and set `site.cvFile` (e.g. `'ZiahBuild-CV.pdf'`); a download button appears.
 - **Project screenshots** — put images in `src/assets/projects/`, import them in `projects.ts`
   and set `media.image` + `media.alt`. Until then a labelled “Preview coming soon” placeholder is shown.

@@ -4,7 +4,7 @@ import { Container } from '../components/Container'
 import { Eyebrow } from '../components/Eyebrow'
 import { Placeholder } from '../components/Placeholder'
 import { services } from '../data/services'
-import { publicUrl, site } from '../data/site'
+import { publicUrl, site, whatsappLink } from '../data/site'
 
 /** Set to an imported image (e.g. `import portrait from '../assets/portrait.webp'`) when available. */
 const portrait: string | undefined = undefined
@@ -67,7 +67,9 @@ export function About() {
             </ol>
 
             <div className="mt-8 flex flex-wrap gap-2.5 lg:mt-auto lg:pt-10">
-              <ButtonLink href="#contact">Work With Me</ButtonLink>
+              <ButtonLink {...whatsappLink}>
+                Work With Me<span className="sr-only"> (opens WhatsApp in a new tab)</span>
+              </ButtonLink>
               {site.cvFile && (
                 <a
                   href={publicUrl(site.cvFile)}

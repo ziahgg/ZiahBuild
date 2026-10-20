@@ -5,6 +5,7 @@ import { Eyebrow } from '../components/Eyebrow'
 import { WorkCard } from '../components/WorkCard'
 import { projectsForService } from '../data/projects'
 import { services } from '../data/services'
+import { whatsappLink } from '../data/site'
 import { routes } from '../routes'
 import type { Service } from '../types'
 
@@ -93,7 +94,9 @@ export function ServiceWorkPage({ service }: { service: Service }) {
                 <br />
                 <span className="text-black/30">Projects for this service are being prepared.</span>
               </p>
-              <ButtonLink href="#contact">Start a Project</ButtonLink>
+              <ButtonLink {...whatsappLink}>
+                Start a Project<span className="sr-only"> (opens WhatsApp in a new tab)</span>
+              </ButtonLink>
             </div>
           )}
         </Container>

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Menu, X } from 'lucide-react'
 import { ButtonLink } from '../components/ButtonLink'
 import { useActiveSection } from '../components/useActiveSection'
-import { navLinks } from '../data/site'
+import { navLinks, whatsappLink } from '../data/site'
 
 const sectionIds = navLinks.map((l) => l.href.slice(1))
 
@@ -66,8 +66,8 @@ export function Navigation({ onHome = true }: { onHome?: boolean }) {
             })}
           </ul>
           <div className="ml-auto flex items-center gap-2">
-            <ButtonLink href="#contact" size="sm" className="hidden h-9 px-4 sm:inline-flex">
-              Let&apos;s Talk
+            <ButtonLink {...whatsappLink} size="sm" className="hidden h-9 px-4 sm:inline-flex">
+              Let&apos;s Talk<span className="sr-only"> (opens WhatsApp in a new tab)</span>
             </ButtonLink>
             <button
               type="button"
@@ -102,8 +102,8 @@ export function Navigation({ onHome = true }: { onHome?: boolean }) {
               </li>
             ))}
           </ul>
-          <ButtonLink href="#contact" onClick={() => setOpen(false)} className="mt-2 w-full">
-            Let&apos;s Talk
+          <ButtonLink {...whatsappLink} onClick={() => setOpen(false)} className="mt-2 w-full">
+            Let&apos;s Talk<span className="sr-only"> (opens WhatsApp in a new tab)</span>
           </ButtonLink>
         </div>
       </nav>

@@ -6,7 +6,7 @@ import { MediaFrame } from '../components/MediaFrame'
 import { Swoosh } from '../components/Swoosh'
 import { projects } from '../data/projects'
 import { services } from '../data/services'
-import { expertise } from '../data/site'
+import { expertise, whatsappLink } from '../data/site'
 import { routes } from '../routes'
 
 const featured = projects[0]
@@ -62,8 +62,8 @@ export function Hero() {
             </ul>
             <div className="mt-7 flex flex-wrap gap-2.5">
               <ButtonLink href="#projects">View My Work</ButtonLink>
-              <ButtonLink href="#contact" variant="light">
-                Let&apos;s Work Together
+              <ButtonLink {...whatsappLink} variant="light">
+                Let&apos;s Work Together<span className="sr-only"> (opens WhatsApp in a new tab)</span>
               </ButtonLink>
             </div>
 
