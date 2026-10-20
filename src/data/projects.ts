@@ -38,23 +38,6 @@ export const projects: Project[] = [
     technologies: [],
   },
   {
-    slug: 'huddlflow',
-    name: 'HuddlFlow',
-    category: 'AI Meeting & Team Collaboration SaaS',
-    kind: 'Concept',
-    services: [],
-    description:
-      'A meeting productivity concept combining transcripts, AI-generated notes, task management, and team collaboration.',
-    overview:
-      'HuddlFlow is a SaaS concept exploring how a team workspace can capture a meeting and carry it forward — from the conversation itself to the notes, decisions and tasks that follow.',
-    problem:
-      'Meeting outcomes are easily lost between the call, scattered notes and separate task tools, so decisions are not always turned into clear, owned actions.',
-    solution:
-      'One collaborative workspace that connects transcripts, AI-generated notes and task management, so what was discussed flows directly into what needs to be done.',
-    media: { placeholder: 'dashboard', tone: 'dark' },
-    technologies: [],
-  },
-  {
     slug: 'luxestay-la',
     name: 'LuxeStay LA',
     category: 'Furnished Apartment Website',

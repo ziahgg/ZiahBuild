@@ -14,10 +14,9 @@ import type { Project } from '../types'
 const layout = [
   { span: 'lg:col-span-7', media: 'aspect-[4/3] lg:aspect-auto lg:h-[480px]' },
   { span: 'lg:col-span-5', media: 'aspect-[4/3] lg:aspect-auto lg:h-[480px]' },
-  { span: 'lg:col-span-12', media: 'aspect-[4/3] sm:aspect-[16/9] lg:aspect-auto lg:h-[560px]', wide: true },
   { span: 'lg:col-span-5', media: 'aspect-[4/3] lg:aspect-auto lg:h-[480px]' },
   { span: 'lg:col-span-7', media: 'aspect-[4/3] lg:aspect-auto lg:h-[480px]' },
-]
+] as { span: string; media: string; wide?: boolean }[]
 
 export function Projects() {
   return (
