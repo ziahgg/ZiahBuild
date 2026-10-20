@@ -30,7 +30,7 @@ export interface Media {
   tone?: Tone
 }
 
-export type ProjectKind = 'Client project' | 'Personal project' | 'Concept' | 'Published Reel'
+export type ProjectKind = 'Client project' | 'Personal project' | 'Concept' | 'Published Reel' | 'Live store'
 
 export type ServiceSlug = 'ui-ux' | 'social-media' | 'full-stack' | 'shopify' | 'video' | 'websites'
 
@@ -93,6 +93,8 @@ export interface Project {
   software?: string
   /** Label for `objective` (defaults to "Design objective"). */
   objectiveLabel?: string
+  /** Supporting line in the live-website CTA (defaults to the GitHub Pages wording). */
+  liveNote?: string
   /** Editorial sections, rendered in order. `note` marks the evidence behind them. */
   sections?: { title: string; text: string; note?: string }[]
   /** Only list technologies that were actually used. */

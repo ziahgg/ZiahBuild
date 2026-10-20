@@ -52,6 +52,7 @@ All content lives in `src/data/` — components don't need to change.
 | `src/data/developmentProjects.ts` | 10 live websites: screenshots, live URLs, problem/solution, verified highlights |
 | `src/data/fullStackProjects.ts` | 5 full-stack technical case studies: covers, repos, implementation, highlights, limitations |
 | `src/data/videoProjects.ts` | 4 Reel case studies: covers, Instagram links, captions, editorial sections |
+| `src/data/shopifyProjects.ts` | Shopify Website Design projects (Sheps Farm) |
 | `src/data/showcase.ts` | UI/UX, web, social and Shopify galleries |
 
 - **Email / socials** — set `site.email` and `site.socials`. Contact buttons and links only appear once

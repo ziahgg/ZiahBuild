@@ -77,7 +77,9 @@ export function ServiceWorkPage({ service }: { service: Service }) {
               className={`grid gap-x-4 gap-y-14 ${
                 verticalWork
                   ? 'sm:grid-cols-2 lg:grid-cols-4'
-                  : `md:grid-cols-2 ${work.length > 4 ? 'xl:grid-cols-3' : ''}`
+                  : work.length === 1
+                    ? 'max-w-5xl' // a single project gets a wide card rather than half a grid
+                    : `md:grid-cols-2 ${work.length > 4 ? 'xl:grid-cols-3' : ''}`
               }`}
             >
               {work.map((project, i) => (

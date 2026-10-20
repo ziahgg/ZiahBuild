@@ -359,7 +359,8 @@ export function ProjectPage({ project }: { project: Project }) {
                   See {project.name} live.
                 </h2>
                 <p className="mt-2 max-w-lg text-sm text-white/75">
-                  Explore the published site on GitHub Pages — the interactions described above work in the browser.
+                  {project.liveNote ??
+                    'Explore the published site on GitHub Pages — the interactions described above work in the browser.'}
                 </p>
               </div>
               <ButtonLink href={project.liveUrl} variant="light" size="lg" icon={false} target="_blank" rel="noopener noreferrer">
