@@ -8,14 +8,11 @@ import { routes } from '../routes'
 import type { Project } from '../types'
 
 /*
- * Bento layout: the span/height of each slot creates varied compositions.
- * Slots repeat if more projects are added to the data file.
+ * Grid slots, repeated in order if more projects are added to the data file.
  */
 const layout = [
-  { span: 'lg:col-span-7', media: 'aspect-[4/3] lg:aspect-auto lg:h-[480px]' },
-  { span: 'lg:col-span-5', media: 'aspect-[4/3] lg:aspect-auto lg:h-[480px]' },
-  { span: 'lg:col-span-5', media: 'aspect-[4/3] lg:aspect-auto lg:h-[480px]' },
-  { span: 'lg:col-span-7', media: 'aspect-[4/3] lg:aspect-auto lg:h-[480px]' },
+  // Equal 16:9 slots match the exported 1920×1080 covers, so nothing is cropped.
+  { span: 'lg:col-span-6', media: 'aspect-[16/9]' },
 ] as { span: string; media: string; wide?: boolean }[]
 
 export function Projects() {

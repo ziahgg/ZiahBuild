@@ -3,6 +3,7 @@ import { ButtonLink } from '../components/ButtonLink'
 import { Container } from '../components/Container'
 import { Eyebrow } from '../components/Eyebrow'
 import { MediaFrame } from '../components/MediaFrame'
+import { TechnicalSections } from '../components/TechnicalSections'
 import { allProjects, getProject, projects, projectsForService } from '../data/projects'
 import { getService } from '../data/services'
 import { routes } from '../routes'
@@ -53,7 +54,12 @@ export function ProjectPage({ project }: { project: Project }) {
       variant: 'outline',
       internal: true,
     },
-    project.githubUrl && { label: 'GitHub', href: project.githubUrl, icon: ArrowUpRight, variant: 'outline' },
+    project.githubUrl && {
+      label: 'View Repository',
+      href: project.githubUrl,
+      icon: Code2,
+      variant: project.liveUrl || project.figmaUrl ? 'outline' : 'primary',
+    },
     project.caseStudyUrl && { label: 'Case study', href: project.caseStudyUrl, icon: ArrowUpRight, variant: 'outline' },
   ].filter(Boolean) as LinkItem[]
 
@@ -144,6 +150,15 @@ export function ProjectPage({ project }: { project: Project }) {
                 </Meta>
                 {project.scope && <Meta term="Scope">{project.scope.join(' · ')}</Meta>}
                 {project.technologies.length > 0 && <Meta term="Technologies">{project.technologies.join(', ')}</Meta>}
+                {project.githubUrl && (
+                  <Meta term="Repository">
+                    <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="break-all hover:text-blue">
+                      {project.githubUrl.replace(/^https:\/\/github\.com\//, '')}
+                      <span className="sr-only"> (opens in a new tab)</span>
+                    </a>
+                  </Meta>
+                )}
+                {project.githubUrl && !project.liveUrl && <Meta term="Live demo">Not hosted</Meta>}
                 {project.liveUrl && (
                   <Meta term="Live site">
                     <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="break-all hover:text-blue">
@@ -161,10 +176,11 @@ export function ProjectPage({ project }: { project: Project }) {
                 {project.overview ?? project.description}
               </p>
 
-              {(project.audience || project.objective) && (
+              {(project.audience || project.objective || project.role) && (
                 <dl className="mt-10 grid gap-3 sm:grid-cols-2">
-                  {project.audience && <Fact term="Audience">{project.audience}</Fact>}
+                  {project.audience && <Fact term="Intended users">{project.audience}</Fact>}
                   {project.objective && <Fact term="Design objective">{project.objective}</Fact>}
+                  {project.role && <Fact term="My role">{project.role}</Fact>}
                 </dl>
               )}
 
@@ -177,6 +193,9 @@ export function ProjectPage({ project }: { project: Project }) {
                       </span>
                       <h2 className="mt-8 text-[11px] font-medium uppercase tracking-[0.08em] text-black/50">The problem</h2>
                       <p className="mt-3 text-[15px] leading-relaxed text-black/75">{project.problem}</p>
+                      {project.problemSource && (
+                        <p className="mt-auto pt-5 text-xs leading-relaxed text-black/45">{project.problemSource}</p>
+                      )}
                     </div>
                   )}
                   {project.solution && (
@@ -232,10 +251,43 @@ export function ProjectPage({ project }: { project: Project }) {
                   </ol>
                 </div>
               )}
+
+              <TechnicalSections project={project} />
             </div>
           </div>
         </Container>
       </section>
+
+      {/* Repository CTA (technical case studies without a live demo) */}
+      {project.githubUrl && !project.liveUrl && !project.figmaUrl && (
+        <section aria-labelledby="repo-cta" className="pb-14">
+          <Container>
+            <div className="flex flex-col items-start justify-between gap-6 rounded-[22px] bg-black p-6 text-white sm:flex-row sm:items-center sm:p-10">
+              <div>
+                <p className="text-[11px] uppercase tracking-[0.08em] text-white/60">GitHub repository</p>
+                <h2 id="repo-cta" className="display mt-3 text-[clamp(1.75rem,3.5vw,2.75rem)]">
+                  Read the code.
+                </h2>
+                <p className="mt-2 max-w-lg text-sm text-white/70">
+                  Source code and documentation for {project.name}. There is no hosted demo — the README explains how
+                  to run it locally.
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-2.5">
+                <ButtonLink href={project.githubUrl} size="lg" icon={false} target="_blank" rel="noopener noreferrer">
+                  <Code2 className="size-5" />
+                  View Repository
+                  <ArrowUpRight className="size-4" />
+                  <span className="sr-only">(opens in a new tab)</span>
+                </ButtonLink>
+                <ButtonLink href="#contact" variant="light" size="lg">
+                  Discuss a Project
+                </ButtonLink>
+              </div>
+            </div>
+          </Container>
+        </section>
+      )}
 
       {/* Live website CTA */}
       {project.liveUrl && (

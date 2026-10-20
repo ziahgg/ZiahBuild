@@ -67,12 +67,34 @@ export interface Project {
   highlights?: { title: string; text: string }[]
   /** Slug of the matching Figma design case study, if any. */
   designCaseStudy?: string
+  /* ---- Technical case studies (Full-Stack Web Development) ---- */
+  /** My actual role and responsibilities. */
+  role?: string
+  /** Where the problem statement comes from, e.g. "Interpreted from the README — not a client brief". */
+  problemSource?: string
+  /** Architecture and implementation topics, verified in the source. */
+  implementation?: { title: string; text: string }[]
+  /** 2–4 highlights, each explaining what, how and why. */
+  engineering?: EngineeringHighlight[]
+  /** Challenges and trade-offs; `inferred` marks considerations not documented in the repo. */
+  challenges?: { title: string; text: string; inferred?: boolean }[]
+  /** Evidence such as tests, builds and deployment, with its source. */
+  validation?: { label: string; text: string }[]
+  /** Known gaps and incomplete features. */
+  limitations?: string[]
   /** Only list technologies that were actually used. */
   technologies: string[]
   figmaUrl?: string
   liveUrl?: string
   githubUrl?: string
   caseStudyUrl?: string
+}
+
+export interface EngineeringHighlight {
+  title: string
+  what: string
+  how: string
+  why: string
 }
 
 export interface Service {

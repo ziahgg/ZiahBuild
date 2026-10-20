@@ -1,6 +1,7 @@
 import type { Project } from '../types'
 import { socialMediaDesigns, websiteDesigns } from './designProjects'
 import { developmentProjects } from './developmentProjects'
+import { fullStackProjects } from './fullStackProjects'
 
 /**
  * Featured projects — shown on the homepage, on each service's "View work"
@@ -19,6 +20,10 @@ import { developmentProjects } from './developmentProjects'
  * no metrics or results have been added). `technologies` stays empty until
  * the stack is verified.
  */
+const featuredFullStack = ['full-stack/luxestay-la', 'full-stack/theraflow', 'full-stack/voya'].map(
+  (slug) => fullStackProjects.find((p) => p.slug === slug)!,
+)
+
 export const projects: Project[] = [
   {
     slug: 'kinora',
@@ -37,55 +42,17 @@ export const projects: Project[] = [
     media: { placeholder: 'dashboard', tone: 'light' },
     technologies: [],
   },
-  {
-    slug: 'luxestay-la',
-    name: 'LuxeStay LA',
-    category: 'Furnished Apartment Website',
-    kind: 'Personal project',
-    services: [],
-    description:
-      'A premium furnished-apartment website with an elevated hospitality aesthetic and a resident dashboard experience.',
-    overview:
-      'LuxeStay LA presents furnished apartments with the feel of a premium hospitality brand, paired with a resident dashboard for life after move-in.',
-    problem:
-      'Furnished-apartment listings often feel generic and fail to communicate a premium stay, and residents have no single place to manage their stay once they arrive.',
-    solution:
-      'An editorial, hospitality-inspired website that showcases each residence with care, combined with a resident dashboard experience that keeps everything in one place.',
-    media: { placeholder: 'website', tone: 'dark' },
-    technologies: [],
-  },
-  {
-    slug: 'theraflow',
-    name: 'TheraFlow',
-    category: 'Digital Product / Application',
-    kind: 'Personal project',
-    services: [],
-    description:
-      'A digital product with a focused application experience. Interface designs and full scope will be added here.',
-    media: { placeholder: 'mobile', tone: 'blue' },
-    technologies: [],
-  },
-  {
-    slug: 'voya',
-    name: 'VOYA',
-    category: 'Travel Planning Application',
-    kind: 'Personal project',
-    services: [],
-    description:
-      'A travel-planning application focused on organizing trips and creating a cohesive digital experience.',
-    overview:
-      'VOYA is a travel-planning application that turns the many moving parts of a trip into one organized, enjoyable experience.',
-    problem:
-      'Trip details are usually spread across bookings, notes and different apps, which makes planning harder to follow — before and during the trip.',
-    solution:
-      'A cohesive app experience that organizes each trip in one place, with a clear structure that keeps plans easy to review and update.',
-    media: { placeholder: 'mobile', tone: 'light' },
-    technologies: [],
-  },
+  ...featuredFullStack,
 ]
 
-/** Every project with its own page: featured projects plus the design case studies. */
-export const allProjects: Project[] = [...projects, ...websiteDesigns, ...socialMediaDesigns, ...developmentProjects]
+/** Every project with its own page: featured projects plus all case-study collections. */
+export const allProjects: Project[] = [
+  ...projects.filter((p) => !p.services.includes('full-stack')),
+  ...websiteDesigns,
+  ...socialMediaDesigns,
+  ...developmentProjects,
+  ...fullStackProjects,
+]
 
 export const getProject = (slug: string) => allProjects.find((p) => p.slug === slug)
 
