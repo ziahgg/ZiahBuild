@@ -1,8 +1,8 @@
-import type { GalleryItem, VideoItem } from '../types'
+import type { GalleryItem } from '../types'
 
 /*
  * Gallery content for the discipline showcases. Every entry renders a
- * designed placeholder until `media.image` (or `src` for videos) is set.
+ * designed placeholder until `media.image` is set.
  */
 
 export const uiuxGallery: GalleryItem[] = [
@@ -53,9 +53,3 @@ export const shopifyGallery: GalleryItem[] = [
   { title: 'Collection page', type: 'Collection', media: { placeholder: 'store', tone: 'dark' } },
 ]
 
-export const videos: VideoItem[] = [
-  { title: 'Brand showreel', category: 'Promotional video', orientation: 'horizontal' },
-  { title: 'Short-form edit', category: 'Reels / TikTok', orientation: 'vertical' },
-  { title: 'Product showcase', category: 'Product video', orientation: 'vertical' },
-  { title: 'Story-driven edit', category: 'Visual storytelling', orientation: 'horizontal' },
-]

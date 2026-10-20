@@ -30,7 +30,7 @@ export interface Media {
   tone?: Tone
 }
 
-export type ProjectKind = 'Client project' | 'Personal project' | 'Concept'
+export type ProjectKind = 'Client project' | 'Personal project' | 'Concept' | 'Published Reel'
 
 export type ServiceSlug = 'ui-ux' | 'social-media' | 'full-stack' | 'shopify' | 'video' | 'websites'
 
@@ -82,6 +82,19 @@ export interface Project {
   validation?: { label: string; text: string }[]
   /** Known gaps and incomplete features. */
   limitations?: string[]
+  /* ---- Video case studies (Video Editing) ---- */
+  /** Original Reel on Instagram (exact URL as supplied). */
+  instagramUrl?: string
+  /** Original published caption. */
+  caption?: string
+  /** Where and when it was published, e.g. "Qube Media on Instagram · 14 Aug 2026". */
+  published?: string
+  /** Editing software used. */
+  software?: string
+  /** Label for `objective` (defaults to "Design objective"). */
+  objectiveLabel?: string
+  /** Editorial sections, rendered in order. `note` marks the evidence behind them. */
+  sections?: { title: string; text: string; note?: string }[]
   /** Only list technologies that were actually used. */
   technologies: string[]
   figmaUrl?: string
@@ -117,14 +130,6 @@ export interface GalleryItem {
   href?: string
 }
 
-export interface VideoItem {
-  title: string
-  category: string
-  orientation: 'horizontal' | 'vertical'
-  /** Local file in /public (e.g. "videos/reel.mp4") or a public URL. */
-  src?: string
-  poster?: string
-}
 
 export interface SocialLink {
   label: string

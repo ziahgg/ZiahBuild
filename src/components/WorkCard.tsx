@@ -1,3 +1,4 @@
+import { ArrowUpRight } from 'lucide-react'
 import { routes } from '../routes'
 import type { Project } from '../types'
 import { MediaFrame } from './MediaFrame'
@@ -5,14 +6,17 @@ import { Swoosh } from './Swoosh'
 
 /** Project card used on the service work pages. */
 export function WorkCard({ project, index }: { project: Project; index: number }) {
+  const vertical = Boolean(project.media.width && project.media.height && project.media.height > project.media.width)
   return (
     <li>
       <a href={routes.project(project.slug)} className="group block rounded-[22px] focus-visible:outline-offset-8">
-        {/* 16:9 matches the exported covers, so nothing is cropped. */}
-        <div className="relative aspect-[16/9] overflow-hidden rounded-[18px] ring-1 ring-black/[0.06]">
+        {/* The frame matches the cover's own ratio (16:9 or 9:16 Reels), so nothing is cropped. */}
+        <div
+          className={`relative overflow-hidden rounded-[18px] ring-1 ring-black/[0.06] ${vertical ? 'aspect-[9/16]' : 'aspect-[16/9]'}`}
+        >
           <MediaFrame
             media={project.media}
-            sizes="(min-width: 1280px) 30vw, (min-width: 768px) 46vw, 92vw"
+            sizes={vertical ? '(min-width: 1024px) 23vw, (min-width: 640px) 46vw, 92vw' : '(min-width: 1280px) 30vw, (min-width: 768px) 46vw, 92vw'}
             className="transition-transform duration-700 ease-out group-hover:scale-[1.03]"
           />
           <span className="absolute right-3 top-3 grid size-10 translate-y-1 place-items-center rounded-full bg-blue text-white opacity-0 shadow-lg transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 group-focus-visible:translate-y-0 group-focus-visible:opacity-100">
@@ -33,6 +37,17 @@ export function WorkCard({ project, index }: { project: Project; index: number }
           View case study <Swoosh className="size-4 transition-transform group-hover:translate-x-0.5" />
         </span>
       </a>
+      {project.instagramUrl && (
+        <a
+          href={project.instagramUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-black/70 underline decoration-black/20 underline-offset-4 hover:text-blue hover:decoration-blue"
+        >
+          Watch on Instagram <ArrowUpRight className="size-4" />
+          <span className="sr-only">: {project.name} (opens in a new tab)</span>
+        </a>
+      )}
     </li>
   )
 }

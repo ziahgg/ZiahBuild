@@ -51,7 +51,8 @@ All content lives in `src/data/` — components don't need to change.
 | `src/data/designProjects.ts` | 10 website + 10 social media case studies: covers, Figma links, problem/solution |
 | `src/data/developmentProjects.ts` | 10 live websites: screenshots, live URLs, problem/solution, verified highlights |
 | `src/data/fullStackProjects.ts` | 5 full-stack technical case studies: covers, repos, implementation, highlights, limitations |
-| `src/data/showcase.ts` | UI/UX, web, social, Shopify galleries and videos |
+| `src/data/videoProjects.ts` | 4 Reel case studies: covers, Instagram links, captions, editorial sections |
+| `src/data/showcase.ts` | UI/UX, web, social and Shopify galleries |
 
 - **Email / socials** — set `site.email` and `site.socials`. Contact buttons and links only appear once
   these are filled in (no dead buttons).
@@ -64,8 +65,6 @@ All content lives in `src/data/` — components don't need to change.
   server rewrites, so they work on GitHub Pages.
 - **Project kind** — `Client project`, `Personal project` or `Concept`. Please confirm each entry.
 - **Technologies** — only add technologies actually used in that project.
-- **Videos** — put files in `public/videos/` and set `src: 'videos/reel.mp4'` (and optionally `poster`).
-  Videos use `preload="none"` and native controls.
 - **Portrait** — import an image in `src/sections/About.tsx` and assign it to `portrait`.
 - **Open Graph image** — add `public/og-image.png` (1200×630) and the absolute `og:image` / `og:url`
   tags in `index.html` once the final URL is known.

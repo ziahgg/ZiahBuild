@@ -1,9 +1,10 @@
-import { ArrowLeft, ArrowRight, ArrowUpRight, Code2, Frame, Globe, Lightbulb, PenTool, SearchCheck } from 'lucide-react'
+import { ArrowLeft, ArrowRight, ArrowUpRight, Code2, Frame, Globe, Lightbulb, PenTool, Play, SearchCheck } from 'lucide-react'
 import { ButtonLink } from '../components/ButtonLink'
 import { Container } from '../components/Container'
 import { Eyebrow } from '../components/Eyebrow'
 import { MediaFrame } from '../components/MediaFrame'
 import { TechnicalSections } from '../components/TechnicalSections'
+import { VideoSections } from '../components/VideoSections'
 import { allProjects, getProject, projects, projectsForService } from '../data/projects'
 import { getService } from '../data/services'
 import { routes } from '../routes'
@@ -28,11 +29,13 @@ export function ProjectPage({ project }: { project: Project }) {
   const backHref = primaryService ? routes.service(primaryService.slug) : '#projects'
   const backLabel = primaryService ? primaryService.title : 'All projects'
   const hasImage = Boolean(project.media.image)
+  const vertical = Boolean(hasImage && project.media.width && project.media.height && project.media.height > project.media.width)
   // Cross-links between a Figma design case study and the live website built from it.
   const designStudy = project.designCaseStudy ? getProject(project.designCaseStudy) : undefined
   const liveBuild = allProjects.find((p) => p.designCaseStudy === project.slug)
 
   const links = [
+    project.instagramUrl && { label: 'Watch on Instagram', href: project.instagramUrl, icon: Play, variant: 'primary' },
     project.liveUrl && { label: 'View Live Website', href: project.liveUrl, icon: Globe, variant: 'primary' },
     project.figmaUrl && {
       label: 'View Figma Design',
@@ -92,21 +95,39 @@ export function ProjectPage({ project }: { project: Project }) {
       {/* Cover + intro + primary CTA */}
       <section aria-label="Cover" className="mt-12">
         <Container>
+          <div className={vertical ? 'grid items-start gap-4 md:grid-cols-[minmax(0,360px)_1fr] lg:grid-cols-[minmax(0,420px)_1fr]' : ''}>
           <div
             className={`overflow-hidden rounded-[22px] ring-1 ring-black/[0.06] ${
-              hasImage ? 'aspect-[16/9]' : 'aspect-[4/3] sm:aspect-[16/9] lg:aspect-[21/10]'
+              vertical
+                ? 'mx-auto aspect-[9/16] w-full max-w-[420px]'
+                : hasImage
+                  ? 'aspect-[16/9]'
+                  : 'aspect-[4/3] sm:aspect-[16/9] lg:aspect-[21/10]'
             }`}
           >
-            <MediaFrame media={project.media} size="full" eager sizes="(min-width: 1440px) 1376px, 96vw" label="Cover coming soon" />
+            <MediaFrame
+              media={project.media}
+              size="full"
+              eager
+              sizes={vertical ? '(min-width: 768px) 420px, 92vw' : '(min-width: 1440px) 1376px, 96vw'}
+              label="Cover coming soon"
+            />
           </div>
-          <div className="mt-4 flex flex-col gap-4 rounded-[22px] border border-black/[0.08] p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
+          <div
+            className={`flex flex-col gap-4 rounded-[22px] border border-black/[0.08] p-4 sm:p-5 ${
+              vertical ? 'md:h-full md:justify-between md:p-8' : 'mt-4 sm:flex-row sm:items-center sm:justify-between'
+            }`}
+          >
             <div className="max-w-2xl">
               {project.brand && (
                 <p className="text-[11px] uppercase tracking-[0.08em] text-black/45">
                   {project.brand} · {project.kind}
                 </p>
               )}
-              <p className="mt-1 text-[15px] leading-relaxed text-black/70">{project.description}</p>
+              <p className={`mt-1 leading-relaxed text-black/70 ${vertical ? 'text-lg' : 'text-[15px]'}`}>
+                {project.description}
+              </p>
+              {vertical && <VideoCaption project={project} />}
             </div>
             {links.length > 0 ? (
               <ProjectLinks links={links} />
@@ -118,6 +139,7 @@ export function ProjectPage({ project }: { project: Project }) {
                 </p>
               )
             )}
+          </div>
           </div>
         </Container>
       </section>
@@ -149,6 +171,8 @@ export function ProjectPage({ project }: { project: Project }) {
                   </ul>
                 </Meta>
                 {project.scope && <Meta term="Scope">{project.scope.join(' · ')}</Meta>}
+                {project.software && <Meta term="Editing software">{project.software}</Meta>}
+                {project.published && <Meta term="Published">{project.published}</Meta>}
                 {project.technologies.length > 0 && <Meta term="Technologies">{project.technologies.join(', ')}</Meta>}
                 {project.githubUrl && (
                   <Meta term="Repository">
@@ -179,7 +203,7 @@ export function ProjectPage({ project }: { project: Project }) {
               {(project.audience || project.objective || project.role) && (
                 <dl className="mt-10 grid gap-3 sm:grid-cols-2">
                   {project.audience && <Fact term="Intended users">{project.audience}</Fact>}
-                  {project.objective && <Fact term="Design objective">{project.objective}</Fact>}
+                  {project.objective && <Fact term={project.objectiveLabel ?? 'Design objective'}>{project.objective}</Fact>}
                   {project.role && <Fact term="My role">{project.role}</Fact>}
                 </dl>
               )}
@@ -211,10 +235,14 @@ export function ProjectPage({ project }: { project: Project }) {
                   )}
                 </div>
               ) : (
-                <p className="mt-12 rounded-[22px] border border-dashed border-black/20 p-6 text-sm text-black/55">
-                  The full case study — problem, process and solution — will be added soon.
-                </p>
+                !project.sections && (
+                  <p className="mt-12 rounded-[22px] border border-dashed border-black/20 p-6 text-sm text-black/55">
+                    The full case study — problem, process and solution — will be added soon.
+                  </p>
+                )
               )}
+
+              <VideoSections project={project} showCaption={!vertical} />
 
               {project.considerations && project.considerations.length > 0 && (
                 <div className="mt-16">
@@ -257,6 +285,37 @@ export function ProjectPage({ project }: { project: Project }) {
           </div>
         </Container>
       </section>
+
+      {/* Final video CTA (video case studies) */}
+      {project.instagramUrl && (
+        <section aria-labelledby="video-cta" className="pb-14">
+          <Container>
+            <div className="flex flex-col items-start justify-between gap-6 rounded-[22px] bg-black p-6 text-white sm:flex-row sm:items-center sm:p-10">
+              <div>
+                <p className="text-[11px] uppercase tracking-[0.08em] text-white/60">Final video</p>
+                <h2 id="video-cta" className="display mt-3 text-[clamp(1.75rem,3.5vw,2.75rem)]">
+                  Watch the Reel.
+                </h2>
+                <p className="mt-2 max-w-lg text-sm text-white/70">
+                  The final edit of “{project.name}” is published on Instagram
+                  {project.published?.includes(' · ') ? `, ${project.published.split(' · ')[1]}` : ''}.
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-2.5">
+                <ButtonLink href={project.instagramUrl} size="lg" icon={false} target="_blank" rel="noopener noreferrer">
+                  <Play className="size-5" />
+                  Watch on Instagram
+                  <ArrowUpRight className="size-4" />
+                  <span className="sr-only">(opens in a new tab)</span>
+                </ButtonLink>
+                <ButtonLink href="#contact" variant="light" size="lg">
+                  Discuss a Project
+                </ButtonLink>
+              </div>
+            </div>
+          </Container>
+        </section>
+      )}
 
       {/* Repository CTA (technical case studies without a live demo) */}
       {project.githubUrl && !project.liveUrl && !project.figmaUrl && (
@@ -405,6 +464,39 @@ function ProjectLinks({ links }: { links: LinkItem[] }) {
         ),
       )}
     </div>
+  )
+}
+
+/** Caption and key facts beside a vertical (9:16) cover. */
+function VideoCaption({ project }: { project: Project }) {
+  const facts = [
+    ['Published', project.published],
+    ['Editing software', project.software],
+    ['Format', project.industry],
+  ].filter((f): f is [string, string] => Boolean(f[1]))
+  return (
+    <>
+      {facts.length > 0 && (
+        <dl className="mt-6 grid gap-4 border-y border-black/10 py-5 sm:grid-cols-3">
+          {facts.map(([term, value]) => (
+            <div key={term}>
+              <dt className="text-[11px] uppercase tracking-[0.08em] text-black/45">{term}</dt>
+              <dd className="mt-1 text-sm font-medium">{value}</dd>
+            </div>
+          ))}
+        </dl>
+      )}
+      {project.caption && (
+        <figure className="mt-6">
+          <figcaption className="text-[11px] font-medium uppercase tracking-[0.08em] text-black/45">Original caption</figcaption>
+          <blockquote className="mt-3 space-y-2 border-l-2 border-blue pl-4 text-[15px] leading-relaxed text-black/75">
+            {project.caption.split('\n').map((line) => (
+              <p key={line}>{line}</p>
+            ))}
+          </blockquote>
+        </figure>
+      )}
+    </>
   )
 }
 

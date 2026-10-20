@@ -14,6 +14,8 @@ const designCollections = ['ui-ux', 'social-media'] as const
 export function ServiceWorkPage({ service }: { service: Service }) {
   const work = projectsForService(service.slug)
   const Icon = service.icon
+  // Vertical covers (e.g. 9:16 Reels) get a denser grid so cards stay a sensible height.
+  const verticalWork = work.length > 0 && work.every((p) => (p.media.height ?? 0) > (p.media.width ?? 0))
   const showSwitcher = (designCollections as readonly string[]).includes(service.slug)
 
   return (
@@ -71,7 +73,13 @@ export function ServiceWorkPage({ service }: { service: Service }) {
       <section aria-label={`${service.title} projects`} className="py-14 sm:py-16">
         <Container>
           {work.length > 0 ? (
-            <ul className={`grid gap-x-4 gap-y-14 md:grid-cols-2 ${work.length > 4 ? 'xl:grid-cols-3' : ''}`}>
+            <ul
+              className={`grid gap-x-4 gap-y-14 ${
+                verticalWork
+                  ? 'sm:grid-cols-2 lg:grid-cols-4'
+                  : `md:grid-cols-2 ${work.length > 4 ? 'xl:grid-cols-3' : ''}`
+              }`}
+            >
               {work.map((project, i) => (
                 <WorkCard key={project.slug} project={project} index={i} />
               ))}

@@ -1,14 +1,11 @@
+import { ArrowUpRight } from 'lucide-react'
+import { ButtonLink } from '../components/ButtonLink'
 import { Container } from '../components/Container'
-import { Placeholder } from '../components/Placeholder'
+import { MediaFrame } from '../components/MediaFrame'
 import { SectionHeading } from '../components/SectionHeading'
-import { publicUrl } from '../data/site'
-import { videos } from '../data/showcase'
-import type { VideoItem } from '../types'
-
-const resolve = (src: string) => (/^https?:\/\//.test(src) ? src : publicUrl(src))
-
-const horizontal = videos.filter((v) => v.orientation === 'horizontal')
-const vertical = videos.filter((v) => v.orientation === 'vertical')
+import { Swoosh } from '../components/Swoosh'
+import { videoProjects } from '../data/videoProjects'
+import { routes } from '../routes'
 
 export function VideoShowcase() {
   return (
@@ -20,50 +17,45 @@ export function VideoShowcase() {
           eyebrow="Video editing"
           lead="Stories Told"
           muted="Through Motion."
-          description="Short-form content, promotional videos and product showcases — edited for pace, clarity and the platform they live on."
+          description="Short-form Reels edited in CapCut — turning news, business ideas and customer insights into clear, vertical stories."
         />
-        <div className="mt-14 grid grid-cols-2 gap-x-3 gap-y-8 lg:grid-cols-4">
-          <ul className="col-span-2 grid gap-y-8">
-            {horizontal.map((video) => (
-              <VideoCard key={video.title} video={video} />
-            ))}
-          </ul>
-          {vertical.map((video) => (
-            <ul key={video.title} className="col-span-1">
-              <VideoCard video={video} />
-            </ul>
+        <ul className="mt-14 grid grid-cols-2 gap-x-3 gap-y-10 lg:grid-cols-4">
+          {videoProjects.map((reel) => (
+            <li key={reel.slug}>
+              <a href={routes.project(reel.slug)} className="group block rounded-[18px] focus-visible:outline-offset-8">
+                <div className="aspect-[9/16] overflow-hidden rounded-[18px] bg-white/5 ring-1 ring-white/10">
+                  <MediaFrame
+                    media={reel.media}
+                    sizes="(min-width: 1024px) 23vw, 46vw"
+                    className="transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+                  />
+                </div>
+                <h3 className="mt-4 text-base font-semibold tracking-tight transition-colors group-hover:text-blue">
+                  {reel.name}
+                </h3>
+                <p className="mt-1 text-[11px] uppercase tracking-[0.08em] text-white/45">Instagram Reel · 9:16</p>
+                <span className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-blue">
+                  Case study <Swoosh className="size-4" />
+                </span>
+              </a>
+              <a
+                href={reel.instagramUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-2 flex items-center gap-1.5 text-sm text-white/70 hover:text-white"
+              >
+                Watch on Instagram <ArrowUpRight className="size-4" />
+                <span className="sr-only">: {reel.name} (opens in a new tab)</span>
+              </a>
+            </li>
           ))}
+        </ul>
+        <div className="mt-14">
+          <ButtonLink href={routes.service('video')} variant="light">
+            View all video work
+          </ButtonLink>
         </div>
       </Container>
     </section>
-  )
-}
-
-function VideoCard({ video }: { video: VideoItem }) {
-  const vertical = video.orientation === 'vertical'
-  return (
-    <li>
-      <div className={`overflow-hidden rounded-[18px] bg-white/5 ${vertical ? 'aspect-[9/16]' : 'aspect-[16/9]'}`}>
-        {video.src ? (
-          <video
-            controls
-            preload="none"
-            playsInline
-            poster={video.poster ? resolve(video.poster) : undefined}
-            className="h-full w-full object-cover"
-          >
-            <source src={resolve(video.src)} />
-          </video>
-        ) : (
-          <Placeholder variant="video" tone="ghost" />
-        )}
-      </div>
-      <div className="mt-4 flex items-baseline justify-between gap-3">
-        <h3 className="text-sm font-medium">{video.title}</h3>
-        <p className="text-[11px] uppercase tracking-[0.08em] text-white/45">
-          {video.category} · {vertical ? '9:16' : '16:9'}
-        </p>
-      </div>
-    </li>
   )
 }

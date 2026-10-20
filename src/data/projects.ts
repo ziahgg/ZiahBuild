@@ -2,6 +2,7 @@ import type { Project } from '../types'
 import { socialMediaDesigns, websiteDesigns } from './designProjects'
 import { developmentProjects } from './developmentProjects'
 import { fullStackProjects } from './fullStackProjects'
+import { videoProjects } from './videoProjects'
 
 /**
  * Featured projects — shown on the homepage, on each service's "View work"
@@ -52,6 +53,7 @@ export const allProjects: Project[] = [
   ...socialMediaDesigns,
   ...developmentProjects,
   ...fullStackProjects,
+  ...videoProjects,
 ]
 
 export const getProject = (slug: string) => allProjects.find((p) => p.slug === slug)
