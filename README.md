@@ -48,6 +48,7 @@ All content lives in `src/data/` — components don't need to change.
 | `src/data/site.ts` | Email, social links, CV file, bio, navigation |
 | `src/data/services.ts` | The six services |
 | `src/data/projects.ts` | Projects: cover image, services, overview, problem, solution, Figma / website / GitHub links |
+| `src/data/designProjects.ts` | 10 website + 10 social media case studies: covers, Figma links, problem/solution |
 | `src/data/showcase.ts` | UI/UX, web, social, Shopify galleries and videos |
 
 - **Email / socials** — set `site.email` and `site.socials`. Contact buttons and links only appear once

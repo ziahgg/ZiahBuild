@@ -5,10 +5,10 @@ export const services: Service[] = [
   {
     slug: 'ui-ux',
     number: '01',
-    title: 'UI/UX Design & Figma',
+    title: 'Website UI/UX Design',
     shortTitle: 'UI/UX',
     description:
-      'User flows, wireframes, prototypes, design systems, reusable components, and polished interface design.',
+      'Website interfaces designed in Figma — user flows, wireframes, prototypes, design systems, and polished desktop and mobile layouts.',
     icon: PenTool,
   },
   {

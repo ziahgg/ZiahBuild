@@ -1,69 +1,80 @@
-import { ArrowLeft, ArrowUpRight, Frame, Globe, Lightbulb, SearchCheck } from 'lucide-react'
+import { ArrowLeft, ArrowRight, ArrowUpRight, Frame, Globe, Lightbulb, SearchCheck } from 'lucide-react'
 import { ButtonLink } from '../components/ButtonLink'
 import { Container } from '../components/Container'
 import { Eyebrow } from '../components/Eyebrow'
 import { MediaFrame } from '../components/MediaFrame'
-import { Swoosh } from '../components/Swoosh'
-import { projects } from '../data/projects'
+import { projects, projectsForService } from '../data/projects'
 import { getService } from '../data/services'
 import { routes } from '../routes'
 import type { Project } from '../types'
 
+type LinkItem = { label: string; href: string; icon: typeof Frame; variant: 'primary' | 'dark' | 'outline' }
+
 export function ProjectPage({ project }: { project: Project }) {
   const primaryService = getService(project.services[0])
-  const index = projects.indexOf(project)
-  const next = projects[(index + 1) % projects.length]
+  // Previous/next stay inside the same collection (e.g. Website UI/UX Design).
+  const siblings = primaryService ? projectsForService(primaryService.slug) : projects
+  const index = siblings.indexOf(project)
+  const prev = siblings.length > 1 ? siblings[(index - 1 + siblings.length) % siblings.length] : undefined
+  const next = siblings.length > 1 ? siblings[(index + 1) % siblings.length] : undefined
+  const backHref = primaryService ? routes.service(primaryService.slug) : '#projects'
+  const backLabel = primaryService ? primaryService.title : 'All projects'
+  const hasImage = Boolean(project.media.image)
 
   const links = [
-    project.figmaUrl && { label: 'Open in Figma', href: project.figmaUrl, icon: Frame, variant: 'primary' as const },
-    project.liveUrl && { label: 'Visit Website', href: project.liveUrl, icon: Globe, variant: 'dark' as const },
-    project.githubUrl && { label: 'GitHub', href: project.githubUrl, icon: ArrowUpRight, variant: 'outline' as const },
-    project.caseStudyUrl && { label: 'Case study', href: project.caseStudyUrl, icon: ArrowUpRight, variant: 'outline' as const },
-  ].filter(Boolean) as { label: string; href: string; icon: typeof Frame; variant: 'primary' | 'dark' | 'outline' }[]
+    project.figmaUrl && { label: 'View Figma Design', href: project.figmaUrl, icon: Frame, variant: 'primary' },
+    project.liveUrl && { label: 'Visit Website', href: project.liveUrl, icon: Globe, variant: 'dark' },
+    project.githubUrl && { label: 'GitHub', href: project.githubUrl, icon: ArrowUpRight, variant: 'outline' },
+    project.caseStudyUrl && { label: 'Case study', href: project.caseStudyUrl, icon: ArrowUpRight, variant: 'outline' },
+  ].filter(Boolean) as LinkItem[]
 
   return (
     <article aria-labelledby="project-title">
       <header className="pt-28 sm:pt-36">
         <Container>
-          <a
-            href={primaryService ? routes.service(primaryService.slug) : '#projects'}
-            className="inline-flex items-center gap-2 text-sm text-black/55 hover:text-blue"
-          >
-            <ArrowLeft className="size-4" /> {primaryService ? primaryService.title : 'All projects'}
+          <a href={backHref} className="inline-flex items-center gap-2 text-sm text-black/55 hover:text-blue">
+            <ArrowLeft className="size-4" /> {backLabel}
           </a>
-          <div className="mt-8 grid gap-6 md:grid-cols-[1fr_auto] md:items-end">
-            <div>
-              <Eyebrow>
-                {project.kind} · {String(index + 1).padStart(2, '0')}
-              </Eyebrow>
-              <h1 id="project-title" className="display mt-5 text-[clamp(2.75rem,7vw,6rem)]">
-                {project.name}
-                <br />
-                <span className="text-black/30">{project.category}</span>
-              </h1>
-            </div>
+          <div className="mt-8">
+            <Eyebrow>
+              {primaryService?.title ?? project.kind} · {String(index + 1).padStart(2, '0')} /{' '}
+              {String(siblings.length).padStart(2, '0')}
+            </Eyebrow>
+            <h1
+              id="project-title"
+              className={`display mt-5 max-w-5xl ${
+                project.name.length > 24 ? 'text-[clamp(2.25rem,5vw,4.25rem)]' : 'text-[clamp(2.75rem,7vw,6rem)]'
+              }`}
+            >
+              {project.name}
+              <br />
+              <span className="text-black/30">{project.category}</span>
+            </h1>
           </div>
         </Container>
       </header>
 
-      {/* Cover + actions */}
+      {/* Cover + intro + primary CTA */}
       <section aria-label="Cover" className="mt-12">
         <Container>
-          <div className="aspect-[4/3] overflow-hidden rounded-[22px] sm:aspect-[16/9] lg:aspect-[21/10]">
-            <MediaFrame media={project.media} label="Cover coming soon" />
+          <div
+            className={`overflow-hidden rounded-[22px] ring-1 ring-black/[0.06] ${
+              hasImage ? 'aspect-[16/9]' : 'aspect-[4/3] sm:aspect-[16/9] lg:aspect-[21/10]'
+            }`}
+          >
+            <MediaFrame media={project.media} size="full" eager sizes="(min-width: 1440px) 1376px, 96vw" label="Cover coming soon" />
           </div>
           <div className="mt-4 flex flex-col gap-4 rounded-[22px] border border-black/[0.08] p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
-            <p className="max-w-xl text-[15px] leading-relaxed text-black/65">{project.description}</p>
+            <div className="max-w-2xl">
+              {project.brand && (
+                <p className="text-[11px] uppercase tracking-[0.08em] text-black/45">
+                  {project.brand} · {project.kind}
+                </p>
+              )}
+              <p className="mt-1 text-[15px] leading-relaxed text-black/70">{project.description}</p>
+            </div>
             {links.length > 0 ? (
-              <div className="flex flex-wrap gap-2.5">
-                {links.map(({ label, href, icon: Icon, variant }) => (
-                  <ButtonLink key={label} href={href} variant={variant} icon={false} target="_blank" rel="noreferrer">
-                    <Icon className="size-4" />
-                    {label}
-                    <span className="sr-only">(opens in a new tab)</span>
-                  </ButtonLink>
-                ))}
-              </div>
+              <ProjectLinks links={links} />
             ) : (
               import.meta.env.DEV && (
                 <p className="max-w-xs rounded-xl border border-dashed border-black/25 p-3 text-xs text-black/55">
@@ -76,15 +87,15 @@ export function ProjectPage({ project }: { project: Project }) {
         </Container>
       </section>
 
-      {/* Details */}
+      {/* Overview, problem, solution */}
       <section aria-label="Project details" className="py-20 sm:py-28">
         <Container>
           <div className="grid gap-12 lg:grid-cols-[320px_1fr] lg:gap-16">
             <aside className="lg:sticky lg:top-28 lg:self-start">
               <dl className="divide-y divide-black/10 border-y border-black/10 text-sm">
+                {project.brand && <Meta term="Brand">{project.brand}</Meta>}
                 <Meta term="Type">{project.kind}</Meta>
-                <Meta term="Category">{project.category}</Meta>
-                <Meta term="Services">
+                <Meta term="Service">
                   <ul className="flex flex-wrap justify-end gap-1.5">
                     {project.services.map((slug) => {
                       const s = getService(slug)
@@ -98,8 +109,10 @@ export function ProjectPage({ project }: { project: Project }) {
                         )
                       )
                     })}
+                    {project.services.length === 0 && <li>{project.category}</li>}
                   </ul>
                 </Meta>
+                {project.scope && <Meta term="Scope">{project.scope.join(' · ')}</Meta>}
                 {project.technologies.length > 0 && <Meta term="Technologies">{project.technologies.join(', ')}</Meta>}
               </dl>
             </aside>
@@ -109,6 +122,13 @@ export function ProjectPage({ project }: { project: Project }) {
               <p className="mt-5 max-w-3xl text-[clamp(1.25rem,2.2vw,1.75rem)] font-medium leading-snug tracking-[-0.02em]">
                 {project.overview ?? project.description}
               </p>
+
+              {(project.audience || project.objective) && (
+                <dl className="mt-10 grid gap-3 sm:grid-cols-2">
+                  {project.audience && <Fact term="Audience">{project.audience}</Fact>}
+                  {project.objective && <Fact term="Design objective">{project.objective}</Fact>}
+                </dl>
+              )}
 
               {project.problem || project.solution ? (
                 <div className="mt-12 grid gap-3 md:grid-cols-2">
@@ -138,39 +158,112 @@ export function ProjectPage({ project }: { project: Project }) {
                   The full case study — problem, process and solution — will be added soon.
                 </p>
               )}
+
+              {project.considerations && project.considerations.length > 0 && (
+                <div className="mt-16">
+                  <h2 className="display text-[clamp(1.75rem,3vw,2.5rem)]">
+                    Key design
+                    <span className="text-black/30"> considerations.</span>
+                  </h2>
+                  <ol className="mt-8 grid gap-3 md:grid-cols-3">
+                    {project.considerations.map((c, i) => (
+                      <li key={c.title} className="rounded-[22px] bg-black/[0.035] p-6">
+                        <span className="text-xs tabular-nums text-blue">{String(i + 1).padStart(2, '0')}</span>
+                        <h3 className="mt-3 text-base font-semibold tracking-tight">{c.title}</h3>
+                        <p className="mt-2 text-sm leading-relaxed text-black/65">{c.text}</p>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              )}
             </div>
           </div>
         </Container>
       </section>
 
-      {/* Next project */}
-      {next && next !== project && (
-        <section aria-label="Next project" className="pb-16">
+      {/* Figma CTA */}
+      {project.figmaUrl && (
+        <section aria-labelledby="figma-cta" className="pb-14">
           <Container>
-            <a
-              href={routes.project(next.slug)}
-              className="group flex flex-col justify-between gap-6 rounded-[22px] bg-black/[0.035] p-6 transition-colors hover:bg-black/[0.06] sm:flex-row sm:items-end sm:p-10"
-            >
+            <div className="flex flex-col items-start justify-between gap-6 rounded-[22px] bg-blue p-6 text-white sm:flex-row sm:items-center sm:p-10">
               <div>
-                <p className="text-[11px] uppercase tracking-[0.08em] text-black/50">Next project</p>
-                <p className="display mt-3 text-[clamp(2rem,5vw,4rem)] transition-colors group-hover:text-blue">
-                  {next.name}
+                <p className="text-[11px] uppercase tracking-[0.08em] text-white/70">Figma</p>
+                <h2 id="figma-cta" className="display mt-3 text-[clamp(1.75rem,3.5vw,2.75rem)]">
+                  See the full design in Figma.
+                </h2>
+                <p className="mt-2 max-w-lg text-sm text-white/75">
+                  Open the {project.brand ?? project.name} {project.category.toLowerCase()} file to explore every screen
+                  and detail.
                 </p>
-                <p className="mt-1 text-black/45">{next.category}</p>
               </div>
-              <span className="grid size-14 shrink-0 place-items-center rounded-full bg-blue text-white transition-transform group-hover:translate-x-1">
-                <Swoosh className="size-6" />
-              </span>
-            </a>
-            <div className="mt-6 flex justify-center">
-              <ButtonLink href="#projects" variant="outline">
-                All projects
+              <ButtonLink href={project.figmaUrl} variant="light" size="lg" icon={false} target="_blank" rel="noreferrer">
+                <Frame className="size-5" />
+                View Figma Design
+                <ArrowUpRight className="size-4" />
+                <span className="sr-only">(opens in a new tab)</span>
               </ButtonLink>
             </div>
           </Container>
         </section>
       )}
+
+      {/* Previous / next within the collection */}
+      {next && prev && (
+        <nav aria-label="More projects" className="pb-16">
+          <Container>
+            <div className="grid gap-3 md:grid-cols-2">
+              <a
+                href={routes.project(prev.slug)}
+                className="group flex items-center gap-5 rounded-[22px] bg-black/[0.035] p-6 transition-colors hover:bg-black/[0.06] sm:p-8"
+              >
+                <span className="grid size-12 shrink-0 place-items-center rounded-full border border-black/15 transition-colors group-hover:border-blue group-hover:text-blue">
+                  <ArrowLeft className="size-5" />
+                </span>
+                <span className="min-w-0">
+                  <span className="block text-[11px] uppercase tracking-[0.08em] text-black/50">Previous project</span>
+                  <span className="mt-1 block truncate text-xl font-semibold tracking-tight group-hover:text-blue sm:text-2xl">
+                    {prev.name}
+                  </span>
+                </span>
+              </a>
+              <a
+                href={routes.project(next.slug)}
+                className="group flex items-center justify-between gap-5 rounded-[22px] bg-black/[0.035] p-6 text-right transition-colors hover:bg-black/[0.06] sm:p-8"
+              >
+                <span className="min-w-0">
+                  <span className="block text-[11px] uppercase tracking-[0.08em] text-black/50">Next project</span>
+                  <span className="mt-1 block truncate text-xl font-semibold tracking-tight group-hover:text-blue sm:text-2xl">
+                    {next.name}
+                  </span>
+                </span>
+                <span className="grid size-12 shrink-0 place-items-center rounded-full bg-blue text-white transition-transform group-hover:translate-x-1">
+                  <ArrowRight className="size-5" />
+                </span>
+              </a>
+            </div>
+            <div className="mt-6 flex justify-center">
+              <ButtonLink href={backHref} variant="outline">
+                {primaryService ? `All ${primaryService.title} projects` : 'All projects'}
+              </ButtonLink>
+            </div>
+          </Container>
+        </nav>
+      )}
     </article>
+  )
+}
+
+function ProjectLinks({ links }: { links: LinkItem[] }) {
+  return (
+    <div className="flex shrink-0 flex-wrap gap-2.5">
+      {links.map(({ label, href, icon: Icon, variant }) => (
+        <ButtonLink key={label} href={href} variant={variant} icon={false} target="_blank" rel="noreferrer">
+          <Icon className="size-4" />
+          {label}
+          <span className="sr-only">(opens in a new tab)</span>
+        </ButtonLink>
+      ))}
+    </div>
   )
 }
 
@@ -179,6 +272,15 @@ function Meta({ term, children }: { term: string; children: React.ReactNode }) {
     <div className="flex items-start justify-between gap-6 py-4">
       <dt className="shrink-0 text-black/50">{term}</dt>
       <dd className="text-right font-medium">{children}</dd>
+    </div>
+  )
+}
+
+function Fact({ term, children }: { term: string; children: React.ReactNode }) {
+  return (
+    <div className="rounded-[18px] border border-black/[0.08] p-5">
+      <dt className="text-[11px] uppercase tracking-[0.08em] text-black/50">{term}</dt>
+      <dd className="mt-2 text-[15px] leading-relaxed text-black/75">{children}</dd>
     </div>
   )
 }

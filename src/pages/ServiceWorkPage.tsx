@@ -8,9 +8,13 @@ import { services } from '../data/services'
 import { routes } from '../routes'
 import type { Service } from '../types'
 
+/** Services whose collections are browsed side by side via the switcher. */
+const designCollections = ['ui-ux', 'social-media'] as const
+
 export function ServiceWorkPage({ service }: { service: Service }) {
   const work = projectsForService(service.slug)
   const Icon = service.icon
+  const showSwitcher = (designCollections as readonly string[]).includes(service.slug)
 
   return (
     <>
@@ -36,13 +40,38 @@ export function ServiceWorkPage({ service }: { service: Service }) {
               <Icon aria-hidden="true" className="size-12" strokeWidth={1.6} />
             </span>
           </div>
+
+          {showSwitcher && (
+            <nav aria-label="Design collections" className="mt-10 inline-flex rounded-full bg-black/[0.05] p-1">
+              {designCollections.map((slug) => {
+                const s = services.find((x) => x.slug === slug)!
+                const current = slug === service.slug
+                return (
+                  <a
+                    key={slug}
+                    href={routes.service(slug)}
+                    aria-current={current ? 'page' : undefined}
+                    className={`inline-flex h-10 items-center gap-2 rounded-full px-4 text-sm font-medium transition-colors sm:px-5 ${
+                      current ? 'bg-black text-white' : 'text-black/60 hover:text-black'
+                    }`}
+                  >
+                    <span className="sm:hidden">{s.shortTitle === 'UI/UX' ? 'Website UI/UX' : 'Social Media'}</span>
+                    <span className="hidden sm:inline">{s.title}</span>
+                    <span className={`text-xs tabular-nums ${current ? 'text-white/60' : 'text-black/35'}`}>
+                      {projectsForService(slug).length}
+                    </span>
+                  </a>
+                )
+              })}
+            </nav>
+          )}
         </Container>
       </section>
 
-      <section aria-label={`${service.title} projects`} className="py-16 sm:py-20">
+      <section aria-label={`${service.title} projects`} className="py-14 sm:py-16">
         <Container>
           {work.length > 0 ? (
-            <ul className="grid gap-x-3 gap-y-14 md:grid-cols-2">
+            <ul className={`grid gap-x-4 gap-y-14 md:grid-cols-2 ${work.length > 4 ? 'xl:grid-cols-3' : ''}`}>
               {work.map((project, i) => (
                 <WorkCard key={project.slug} project={project} index={i} />
               ))}

@@ -1,7 +1,8 @@
 import type { Project } from '../types'
+import { socialMediaDesigns, websiteDesigns } from './designProjects'
 
 /**
- * Selected projects — shown on the homepage, on each service's "View work"
+ * Featured projects — shown on the homepage, on each service's "View work"
  * page (via `services`) and on their own project page (`#/work/<slug>`).
  *
  * To add a real cover image:
@@ -23,7 +24,7 @@ export const projects: Project[] = [
     name: 'Kinora',
     category: 'Elderly Care Management Platform',
     kind: 'Personal project',
-    services: ['ui-ux'],
+    services: [],
     description:
       'A booking and management experience connecting care recipients, families, nurses, and service administrators.',
     overview:
@@ -40,7 +41,7 @@ export const projects: Project[] = [
     name: 'HuddlFlow',
     category: 'AI Meeting & Team Collaboration SaaS',
     kind: 'Concept',
-    services: ['ui-ux'],
+    services: [],
     description:
       'A meeting productivity concept combining transcripts, AI-generated notes, task management, and team collaboration.',
     overview:
@@ -57,7 +58,7 @@ export const projects: Project[] = [
     name: 'LuxeStay LA',
     category: 'Furnished Apartment Website',
     kind: 'Personal project',
-    services: ['ui-ux', 'websites'],
+    services: ['websites'],
     description:
       'A premium furnished-apartment website with an elevated hospitality aesthetic and a resident dashboard experience.',
     overview:
@@ -74,7 +75,7 @@ export const projects: Project[] = [
     name: 'TheraFlow',
     category: 'Digital Product / Application',
     kind: 'Personal project',
-    services: ['ui-ux'],
+    services: [],
     description:
       'A digital product with a focused application experience. Interface designs and full scope will be added here.',
     media: { placeholder: 'mobile', tone: 'blue' },
@@ -85,7 +86,7 @@ export const projects: Project[] = [
     name: 'VOYA',
     category: 'Travel Planning Application',
     kind: 'Personal project',
-    services: ['ui-ux'],
+    services: [],
     description:
       'A travel-planning application focused on organizing trips and creating a cohesive digital experience.',
     overview:
@@ -99,6 +100,10 @@ export const projects: Project[] = [
   },
 ]
 
-export const getProject = (slug: string) => projects.find((p) => p.slug === slug)
+/** Every project with its own page: featured projects plus the design case studies. */
+export const allProjects: Project[] = [...projects, ...websiteDesigns, ...socialMediaDesigns]
 
-export const projectsForService = (slug: string) => projects.filter((p) => (p.services as string[]).includes(slug))
+export const getProject = (slug: string) => allProjects.find((p) => p.slug === slug)
+
+export const projectsForService = (slug: string) =>
+  allProjects.filter((p) => (p.services as string[]).includes(slug))

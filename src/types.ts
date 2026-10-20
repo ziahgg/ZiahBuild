@@ -20,6 +20,11 @@ export type Tone = 'light' | 'dark' | 'blue' | 'ghost'
 export interface Media {
   /** Imported asset URL (e.g. `import shot from '../assets/kinora.webp'`). */
   image?: string
+  /** Smaller version of `image` for grids (e.g. a 1280px JPEG). */
+  thumb?: string
+  /** Intrinsic size of `image`, used to reserve space and avoid cropping. */
+  width?: number
+  height?: number
   alt?: string
   placeholder: PreviewVariant
   tone?: Tone
@@ -40,12 +45,22 @@ export interface Project {
   media: Media
   /** Services this project appears under on the "View work" pages. */
   services: ServiceSlug[]
+  /** Brand name shown in the design, e.g. "AERIS". */
+  brand?: string
+  /** Deliverables, e.g. ["Desktop", "Mobile"] or ["Carousels", "Posts", "Reels"]. */
+  scope?: string[]
   /** Longer introduction on the project page. */
   overview?: string
+  /** Who the design is for. */
+  audience?: string
+  /** The main design objective. */
+  objective?: string
   /** The problem the project addresses. */
   problem?: string
   /** How the design / build solves it. */
   solution?: string
+  /** Key design decisions shown on the project page. */
+  considerations?: { title: string; text: string }[]
   /** Only list technologies that were actually used. */
   technologies: string[]
   figmaUrl?: string
