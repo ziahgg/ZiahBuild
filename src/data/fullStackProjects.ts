@@ -13,6 +13,8 @@ import { publicUrl } from './site'
  * Nuvora (added later, same owner, no live demo) is the exception on testing:
  * its type check, lint and Jest suite were run during development; its pgTAP
  * tests were not. Its cover uses screens captured from the running app.
+ * Velora follows the same pattern: Jest, PGlite and web E2E runs were executed
+ * during development; pgTAP and native device runs were not.
  *
  * Covers come from ZiahBuild-Full-Stack-Covers.zip (original 1920×1080 PNGs)
  * in /public/covers/full-stack/, plus a 1280px JPEG for grids.
@@ -422,6 +424,67 @@ export const fullStackProjects: Project[] = [
       'SMS reminders and push notifications aren’t connected to a provider; “Send reminder” opens the device’s Messages app.',
       'Language, date format and first day of week are display-only.',
       'Two-step verification, signed-in devices and account deletion aren’t implemented.',
+    ],
+  }),
+  fullStack({
+    slug: 'velora',
+    repo: 'Velora',
+    cover: 'velora-cover',
+    coverAlt: 'Velora cover: the running app’s Room Selection, Home and Payment screens, with the React Native, TypeScript and Supabase stack',
+    name: 'Velora — Travel & Hotel Booking App',
+    industry: 'Travel & hotel booking mobile app',
+    scope: ['Expo mobile app', 'Supabase backend', 'Server-side pricing', 'Tests'],
+    description:
+      'Hotel booking app — search and filters, room availability, server-priced bookings and a sandbox payment flow — built with Expo, TypeScript and Supabase.',
+    overview:
+      'Velora is a React Native app, built with Expo, that implements the Velora Figma design. Guests browse destinations and sample hotels, search and filter, pick dates, guests and a room, review an itemised price, pay through a sandbox adapter and manage the trip in My Trips. It runs against Supabase (Auth, Postgres) when its public keys are set; otherwise an on-device demo backend applies the same booking rules.',
+    audience: 'Travellers booking hotel stays from their phone.',
+    role: 'Sole developer — app architecture, the Supabase schema, RLS policies and booking functions, the data layer, all screens and the test suites. Built with AI coding assistance (Claude Code).',
+    technologies: ['React Native', 'Expo (SDK 58)', 'Expo Router', 'TypeScript', 'Supabase (Postgres, Auth)', 'TanStack Query', 'zod', 'Jest', 'PGlite / pgTAP'],
+    problem:
+      'A booking app can’t trust the price or availability a phone sends: totals must be recomputed on the trusted side, two people mustn’t book the last room, a double tap mustn’t create two bookings, and a “Pay” button mustn’t be mistaken for proof of payment.',
+    solution:
+      'Bookings are created by a Postgres function that recomputes the price from the catalog, rejects any mismatch with what the guest saw, checks capacity and per-night inventory under a row lock, and holds the room for 15 minutes. Idempotency keys make retries safe, triggers enforce booking and payment status transitions, and Row Level Security keeps bookings, payments and favourites private to each user.',
+    implementation: [
+      { title: 'App structure', text: 'Expo Router with `Stack.Protected` guards for onboarding, sign-in and the app; five tabs behind a floating pill navigation; booking steps pass only IDs and re-read the booking from the backend.' },
+      { title: 'Data layer', text: 'One `DataService` interface with a Supabase implementation and an AsyncStorage demo backend. TanStack Query caches the catalog, favourites (optimistic, with undo), bookings and availability.' },
+      { title: 'Database', text: 'One SQL migration: catalog tables, profiles, favourites, bookings and payments; security-definer functions `create_booking`, `record_sandbox_payment`, `cancel_booking` and `room_availability`; RLS on every table.' },
+      { title: 'Pricing', text: 'Integer cents everywhere. Rate × nights × rooms, plus the hotel’s tax rate and nightly resort fee — one TypeScript function mirrored in SQL.' },
+    ],
+    engineering: [
+      {
+        title: 'The server sets the price',
+        what: 'A booking is only created at the price the backend computes.',
+        how: '`create_booking` recomputes the total in SQL and raises `price_changed` if the client’s expected total differs; the app then refreshes the catalog and shows the error.',
+        why: 'A modified client can’t book at a price the guest wasn’t entitled to.',
+      },
+      {
+        title: 'Inventory holds and idempotency',
+        what: 'The last room can’t be sold twice, and retries don’t duplicate bookings.',
+        how: 'The room type row is locked while per-night usage (confirmed bookings plus live 15-minute holds) is checked; requests carry an idempotency key that is unique per user.',
+        why: 'Concurrent requests and double taps resolve to one consistent result.',
+      },
+      {
+        title: 'Honest payment status',
+        what: 'Payment success and booking status are tracked separately.',
+        how: 'A sandbox adapter returns succeeded or declined; the result is recorded by a function that confirms the booking only on success, and is switched off by a server setting for production.',
+        why: 'A declined card keeps the hold, and nothing pretends a real charge happened.',
+      },
+    ],
+    challenges: [
+      { title: 'Two backends, one set of rules', text: 'The demo backend mirrors the SQL rules in TypeScript, so the app works without an account; both sides are covered by parallel tests.' },
+      { title: 'No real payment provider yet', text: 'Payments are a clearly labelled sandbox. The README describes the server-side confirmation (provider webhook) needed for production.' },
+    ],
+    validation: [
+      { label: 'Unit and integration tests', text: '46 Jest tests (dates, money, pricing, search, booking rules, validation and the demo backend) — all passing when run during development.' },
+      { label: 'Database', text: 'The migration and seed run on PGlite (Postgres in WASM) with 33 checks for pricing, RLS isolation, idempotency, inventory, holds, payments and cancellation — all passing. The pgTAP suite via the Supabase CLI has not been run.' },
+      { label: 'End-to-end', text: 'A 12-step headless-Chrome run of the booking flow on the Expo web build passes. The app has not been run on an iOS or Android device or against a hosted Supabase project, and no live demo is published.' },
+    ],
+    limitations: [
+      'Hotels, prices, ratings and inventory are sample data, labelled in the app.',
+      'Payments are sandbox only — no payment provider is connected.',
+      'Flights and Car rental are coming-soon screens; Google and Apple sign-in aren’t configured.',
+      'The map view is a schematic, not a map SDK.',
     ],
   }),
 ]

@@ -48,6 +48,8 @@ interface DesignInput {
   problem: string
   solution: string
   considerations: { title: string; text: string }[]
+  /** Overrides the category's default cover alt text. */
+  coverAlt?: string
 }
 
 const meta: Record<Category, { service: ServiceSlug; category: string; scope: string[]; alt: string }> = {
@@ -74,7 +76,7 @@ const meta: Record<Category, { service: ServiceSlug; category: string; scope: st
 const placeholders = { website: 'website', 'social-media': 'social', 'app-design': 'mobile' } as const
 
 function design(category: Category, input: DesignInput): Project {
-  const { node, slug, ...rest } = input
+  const { node, slug, coverAlt, ...rest } = input
   const m = meta[category]
   const file = `covers/${category}/${slug}-${category}-cover`
   return {
@@ -91,7 +93,7 @@ function design(category: Category, input: DesignInput): Project {
       thumb: publicUrl(`${file}-1280.jpg`),
       width: 1920,
       height: 1080,
-      alt: `${[input.brand, input.name].filter(Boolean).join(' ')} ${m.alt}`,
+      alt: coverAlt ?? `${[input.brand, input.name].filter(Boolean).join(' ')} ${m.alt}`,
       placeholder: placeholders[category],
     },
   }
@@ -534,6 +536,27 @@ export const appDesigns: Project[] = [
       { title: 'Money you can trust', text: 'Large, tabular figures with clear labels — received, outstanding, recorded — and plain-language definitions so numbers never feel ambiguous.' },
       { title: 'Design system first', text: 'Tokens, a serif display face paired with a clean sans, status badges, fields and feedback patterns are defined once and reused across every screen.' },
       { title: 'Every state designed', text: 'Validation errors, confirmations, empty lists, loading skeletons and network errors are designed alongside the main flows.' },
+    ],
+  }),
+  design('app-design', {
+    slug: 'velora',
+    name: 'Velora — Travel & Hotel Booking App',
+    node: '2617-10811',
+    coverAlt: 'Velora mobile app design — onboarding, home and hotel detail screens',
+    description:
+      'Travel and hotel booking app — hotel discovery, room selection, booking review and a clear payment screen in one flow.',
+    overview:
+      'Velora is a mobile app concept for discovering and booking hotels. The Figma file covers brand identity, a design system, onboarding and sign-in, a home screen with featured destinations and recommended stays, search with filters, list and map results, destination pages, hotel details, room selection, booking review, payment and confirmation, My Trips, saved stays and profile — plus empty, loading, offline and payment-failed states, and Flights and Car rental screens.',
+    audience: 'Travellers who want to find and book a stay from their phone.',
+    objective: 'Make booking a hotel feel calm and transparent, from the first search to the confirmed trip.',
+    problem:
+      'Hotel booking apps often hide the real price until the last step, bury room differences in long lists and make it hard to see what happens after paying. Travellers lose confidence right before they commit.',
+    solution:
+      'A dark search hero keeps destination, dates and guests in view. Hotel cards layer key facts over large photography; room cards compare size, beds, capacity, price per night and cancellation terms side by side. The review and payment screens show an itemised price — nightly rate, taxes and fees — before a dark "Amount Due" card and the payment methods, and a confirmation card carries the booking ID into My Trips.',
+    considerations: [
+      { title: 'Price shown up front', text: 'Prices always carry their unit (/night), and the full total with taxes and fees appears before payment.' },
+      { title: 'Restrained accent', text: 'Ink surfaces and a lime accent used only for key actions, selected states and success — photography carries the colour.' },
+      { title: 'Every state designed', text: 'Empty saved stays and trips, loading skeletons, no results, offline and payment-declined screens sit alongside the main flow.' },
     ],
   }),
 ]
