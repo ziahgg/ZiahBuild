@@ -1,5 +1,5 @@
 import type { Project } from '../types'
-import { socialMediaDesigns, websiteDesigns } from './designProjects'
+import { appDesigns, socialMediaDesigns, websiteDesigns } from './designProjects'
 import { developmentProjects } from './developmentProjects'
 import { fullStackProjects } from './fullStackProjects'
 import { shopifyProjects } from './shopifyProjects'
@@ -51,6 +51,7 @@ export const projects: Project[] = [
 export const allProjects: Project[] = [
   ...projects.filter((p) => !p.services.includes('full-stack')),
   ...websiteDesigns,
+  ...appDesigns,
   ...socialMediaDesigns,
   ...developmentProjects,
   ...fullStackProjects,

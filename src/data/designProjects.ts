@@ -21,6 +21,10 @@ import { publicUrl } from './site'
  *   09-Tennis-Website-Design-*                     → tennis
  *   10-Finance-*                                   → finance
  *
+ * Nuvora (mobile app, page "Nuvora" — node 2613-2111) has no export in that
+ * zip: its cover in /public/covers/app-design/ is composed from three of the
+ * file's own frames (Welcome, Dashboard, Finance Overview), unretouched.
+ *
  * Copy is written from what is visible in each design. The brands and
  * on-screen figures are part of the design concepts — no client results,
  * metrics or outcomes are claimed.
@@ -28,12 +32,13 @@ import { publicUrl } from './site'
 
 const FIGMA = 'https://www.figma.com/design/olXEM3pl6a0vHZU4HZ8rFz/Ziah-s-Portfolio---2026?node-id='
 
-type Category = 'website' | 'social-media'
+type Category = 'website' | 'social-media' | 'app-design'
 
 interface DesignInput {
   slug: string
   name: string
-  brand: string
+  /** Omitted when the product name is the brand (e.g. Nuvora). */
+  brand?: string
   /** Figma node id, e.g. "2603-115". */
   node: string
   description: string
@@ -58,7 +63,15 @@ const meta: Record<Category, { service: ServiceSlug; category: string; scope: st
     scope: ['Carousels', 'Posts', 'Reels'],
     alt: 'social media design — carousel, post and reel mockups',
   },
+  'app-design': {
+    service: 'ui-ux',
+    category: 'Mobile App UI/UX Design',
+    scope: ['Mobile app', 'Design system', 'Prototype'],
+    alt: 'mobile app design — onboarding, dashboard and finance screens',
+  },
 }
+
+const placeholders = { website: 'website', 'social-media': 'social', 'app-design': 'mobile' } as const
 
 function design(category: Category, input: DesignInput): Project {
   const { node, slug, ...rest } = input
@@ -78,8 +91,8 @@ function design(category: Category, input: DesignInput): Project {
       thumb: publicUrl(`${file}-1280.jpg`),
       width: 1920,
       height: 1080,
-      alt: `${input.brand} ${input.name} ${m.alt}`,
-      placeholder: category === 'website' ? 'website' : 'social',
+      alt: `${[input.brand, input.name].filter(Boolean).join(' ')} ${m.alt}`,
+      placeholder: placeholders[category],
     },
   }
 }
@@ -494,6 +507,33 @@ export const socialMediaDesigns: Project[] = [
       { title: 'Approachable tone', text: 'Simple language and checklists make finance feel manageable rather than intimidating.' },
       { title: 'Product context', text: 'Feature posts reuse interface elements so followers recognize the product later.' },
       { title: 'Scannable hierarchy', text: 'One large headline, supporting data cards and a clear label structure every post.' },
+    ],
+  }),
+]
+
+/* ------------------------------------------------------------------ */
+/* Mobile App UI/UX Design (listed under the UI/UX service)            */
+/* ------------------------------------------------------------------ */
+
+export const appDesigns: Project[] = [
+  design('app-design', {
+    slug: 'nuvora',
+    name: 'Nuvora',
+    node: '2613-2111',
+    description:
+      'Mobile app for small service businesses — customers, orders, payments, expenses and appointments in one workspace.',
+    overview:
+      'Nuvora is a mobile app concept for small service businesses such as laundries, salons and repair shops. The Figma file covers the full product: brand identity, a design system, onboarding and business setup, a home dashboard, customers, orders, finance, appointments, reports, notifications and settings, plus empty, loading and error states and an interactive prototype.',
+    audience: 'Owners and staff of small service businesses who manage their day from a phone.',
+    objective: 'Bring the daily back office — who ordered what, who has paid and what is due today — into one calm, easy-to-read app.',
+    problem:
+      'Small service businesses often track orders in a notebook, payments in a chat app and expenses in a spreadsheet. It becomes hard to answer simple questions: who still owes money, what is due today, and whether the month is actually profitable.',
+    solution:
+      'A "Today at a glance" dashboard shows money received, outstanding balances and revenue recorded today, with progress rings for collections, completed orders and overdue orders. Dedicated flows cover creating orders, recording payments (with a validation state for amounts above the balance due), adding expenses, booking appointments (with a clash warning) and reading reports. A short note on the finance screen explains how revenue, money received and profit are counted.',
+    considerations: [
+      { title: 'Money you can trust', text: 'Large, tabular figures with clear labels — received, outstanding, recorded — and plain-language definitions so numbers never feel ambiguous.' },
+      { title: 'Design system first', text: 'Tokens, a serif display face paired with a clean sans, status badges, fields and feedback patterns are defined once and reused across every screen.' },
+      { title: 'Every state designed', text: 'Validation errors, confirmations, empty lists, loading skeletons and network errors are designed alongside the main flows.' },
     ],
   }),
 ]

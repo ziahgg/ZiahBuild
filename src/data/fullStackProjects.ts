@@ -10,6 +10,9 @@ import { publicUrl } from './site'
  * Test counts and eval figures are quoted from the READMEs and labelled as such;
  * none of these projects was built or tested as part of the portfolio.
  * All five repositories have a single contributor (ziahgg) and no live demo.
+ * Nuvora (added later, same owner, no live demo) is the exception on testing:
+ * its type check, lint and Jest suite were run during development; its pgTAP
+ * tests were not. Its cover uses screens captured from the running app.
  *
  * Covers come from ZiahBuild-Full-Stack-Covers.zip (original 1920×1080 PNGs)
  * in /public/covers/full-stack/, plus a 1280px JPEG for grids.
@@ -356,6 +359,69 @@ export const fullStackProjects: Project[] = [
       'Inbound email is simulated through a webhook rather than connected to a mail provider.',
       'The retrieval eval uses a small corpus (15 documents, 13 questions).',
       'Answer and agent generation require a Groq API key.',
+    ],
+  }),
+  fullStack({
+    slug: 'nuvora',
+    repo: 'nuvora',
+    cover: 'nuvora-cover',
+    coverAlt: 'Nuvora cover: the running app’s Orders list, “Today at a glance” dashboard and Schedule screens, with the React Native, TypeScript and Supabase stack',
+    name: 'Nuvora',
+    industry: 'Small-business management mobile app',
+    scope: ['Expo mobile app', 'Supabase backend', 'Row Level Security', 'Tests'],
+    description:
+      'Mobile back office for small service businesses — customers, orders, payments, expenses, appointments and reports — built with Expo, TypeScript and Supabase.',
+    overview:
+      'Nuvora is a React Native app, built with Expo, that implements the Nuvora Figma design. Owners and staff manage customers, create orders from a service price list, record payments and expenses, book pickups and deliveries, and read reports. The app runs against Supabase (Postgres, Auth, Storage) when its public keys are set; otherwise it uses an on-device demo backend that enforces the same rules.',
+    audience: 'Owners, managers and staff of small service businesses such as laundries, salons and repair shops.',
+    role: 'Sole developer — app architecture, the Supabase schema, RLS policies and triggers, the data layer, all screens and the test suite. Built with AI coding assistance (Claude Code).',
+    technologies: ['React Native', 'Expo (SDK 58)', 'Expo Router', 'TypeScript', 'Supabase (Postgres, Auth, Storage)', 'TanStack Query', 'zod', 'Jest', 'pgTAP'],
+    problem:
+      'A business app that handles money has to get two things right: the numbers must be exact and mean the same thing on every screen, and each business’s data must stay private — including from its own staff, who shouldn’t see expenses or reports. Hiding buttons in the UI doesn’t enforce either.',
+    solution:
+      'All money is stored and calculated as integer cents, and every metric (revenue recorded, money received, profit, outstanding, overdue) comes from one module of pure functions. Every business table is scoped by `business_id` and protected by Row Level Security with role-aware helper functions. Rules that must always hold — no overpayment, no payments on cancelled orders, sequential order numbers — are enforced in Postgres triggers.',
+    implementation: [
+      { title: 'App structure', text: 'Expo Router file-based routes with `Stack.Protected` guards that switch between the signed-out, business-setup and app route groups. A custom tab bar includes a floating create sheet.' },
+      { title: 'Data layer', text: 'One `DataService` interface with two implementations: Supabase, and an AsyncStorage demo backend with serialized writes. The app loads one workspace per member through TanStack Query, and every screen derives its figures from that snapshot.' },
+      { title: 'Database', text: 'A single SQL migration: 11 tables, `security definer` helpers (`is_member`, `has_role`, `is_finance`), triggers for order numbering, total recomputation, payment guarding and notifications, and RPCs for creating a business, inviting members and saving an order with its items in one transaction.' },
+      { title: 'Storage', text: 'Receipt photos go to a private bucket under a folder per business, readable only by that business’s owners and managers.' },
+      { title: 'Validation', text: 'zod schemas validate forms on the device; the database checks the same rules again.' },
+    ],
+    engineering: [
+      {
+        title: 'Overpayment guard in the database',
+        what: 'A payment can never exceed an order’s balance due, and cancelled orders can’t be paid.',
+        how: 'A `before insert` trigger locks the order row (`for update`), recomputes the amount already paid and raises an error if the new payment would exceed the balance.',
+        why: 'Two people recording payments at the same moment can’t overpay an order, and a modified client can’t skip the check.',
+      },
+      {
+        title: 'Roles enforced by RLS, not by hidden UI',
+        what: 'Staff can work with orders, customers and the schedule, but can’t record payments or see expenses.',
+        how: 'RLS policies call `is_finance(business_id)` for payment inserts and expenses; the app also hides those screens and shows “Not available for your role” when they’re opened directly.',
+        why: 'The UI improves the experience, but the database is what actually protects the data.',
+      },
+      {
+        title: 'Integer cents end to end',
+        what: 'No floating-point maths on money.',
+        how: 'Amounts are typed in as strings and parsed straight to cents, line totals are whole quantity × unit price in cents, and Postgres stores `bigint` cents with a generated line-total column.',
+        why: 'Totals, balances and reports always add up exactly.',
+      },
+    ],
+    challenges: [
+      { title: 'One set of rules, two backends', text: 'The demo backend has to refuse exactly what the database refuses; unit tests cover overpayment, edits below the amount paid, cancelled orders, order numbering and staff permissions.' },
+      { title: 'Clearly defined metrics', text: '“Revenue” is counted when an order is created and “money received” when it is paid; both definitions live in one module and are explained in the app, so the dashboard, finance tab and reports always agree.' },
+    ],
+    validation: [
+      { label: 'Unit tests', text: '37 Jest tests (money, finance metrics, reports, CSV, validation and the demo backend’s rules) — all passing when run during development.' },
+      { label: 'Static checks', text: '`tsc --noEmit` and `expo lint` passed; `expo-doctor` reported 20/20 checks.' },
+      { label: 'Database tests', text: 'pgTAP tests for RLS isolation and the money rules are included but have not been run — that requires the Supabase CLI and Docker.' },
+      { label: 'Manual testing', text: 'The main flows were tested in the Expo web build at phone width using the demo backend. The app has not been run on an iOS or Android device or against a live Supabase project, and no live demo is published.' },
+    ],
+    limitations: [
+      'Team invites don’t send email — the invited person signs up with that address and is linked automatically.',
+      'SMS reminders and push notifications aren’t connected to a provider; “Send reminder” opens the device’s Messages app.',
+      'Language, date format and first day of week are display-only.',
+      'Two-step verification, signed-in devices and account deletion aren’t implemented.',
     ],
   }),
 ]
