@@ -15,6 +15,11 @@ import { publicUrl } from './site'
  * tests were not. Its cover uses screens captured from the running app.
  * Velora follows the same pattern: Jest, PGlite and web E2E runs were executed
  * during development; pgTAP and native device runs were not.
+ * Montra, PulseFit and Cravora (same owner, no live demo) are the same: their
+ * Vitest suites were run during development, and PulseFit's and Cravora's
+ * Playwright suites were run against a local Supabase stack. Montra has no
+ * end-to-end tests. Their covers use screens captured from the running apps
+ * with seed data.
  *
  * Covers come from ZiahBuild-Full-Stack-Covers.zip (original 1920×1080 PNGs)
  * in /public/covers/full-stack/, plus a 1280px JPEG for grids.
@@ -485,6 +490,163 @@ export const fullStackProjects: Project[] = [
       'Payments are sandbox only — no payment provider is connected.',
       'Flights and Car rental are coming-soon screens; Google and Apple sign-in aren’t configured.',
       'The map view is a schematic, not a map SDK.',
+    ],
+  }),
+  fullStack({
+    slug: 'montra',
+    repo: 'Montra',
+    cover: 'montra-cover',
+    coverAlt: 'Montra cover: the running app’s Transactions, Home and Reports screens, with the Next.js, TypeScript and IndexedDB stack',
+    name: 'Montra — Personal Finance App',
+    industry: 'Personal finance web app',
+    scope: ['Next.js app', 'Local-first storage', 'Finance rules', 'Tests'],
+    description:
+      'Local-first personal finance app — transactions, budgets, savings goals, accounts and reports — built with Next.js, TypeScript and IndexedDB.',
+    overview:
+      'Montra is a Next.js web app that implements the Montra Figma design. Users record expenses, income and transfers, set monthly or weekly budgets, contribute to savings goals, manage accounts and read reports with cash flow and spending by category. All data stays in the browser in IndexedDB; on first run the app seeds sample data that reproduces the design’s figures.',
+    audience: 'Individuals tracking their own spending, budgets and savings.',
+    role: 'Sole developer — data model, finance rules, storage layer, all screens and the test suites. Built with AI coding assistance (Claude Code).',
+    technologies: ['Next.js 16', 'React 19', 'TypeScript', 'Tailwind CSS v4', 'IndexedDB', 'Vitest'],
+    problem:
+      'A finance app is only useful if every number agrees: balances, monthly totals, budgets and goal progress must follow the same rules, transfers must never count as spending, and a quick edit or undo must never lose data.',
+    solution:
+      'Every figure comes from one module of pure functions (`finance.ts`) working on integer cents grouped by currency. Changes are pure actions that return new data, and the store saves them to IndexedDB through a serialized queue, so a newer save is never overwritten by an older one.',
+    implementation: [
+      { title: 'App structure', text: 'Next.js App Router with routes for home, transactions, budgets, reports, savings, accounts, notifications and profile; the report period lives in the URL.' },
+      { title: 'Domain layer', text: 'Pure actions `(data, input, ctx) → data` with injected time and IDs, plus validation that returns field-level errors shown inline.' },
+      { title: 'Storage', text: 'One versioned document in IndexedDB. Corrupt data is backed up and reseeded; if IndexedDB is unavailable the app runs in memory and warns on the Profile screen.' },
+      { title: 'UI system', text: 'Design tokens as CSS variables mapped into Tailwind, a type scale matching the Figma styles, dark mode, and plain-SVG charts with text summaries.' },
+    ],
+    engineering: [
+      {
+        title: 'One source for every number',
+        what: 'Balances, totals, budgets and goal progress follow the same rules everywhere.',
+        how: 'Screens call `finance.ts` functions such as `periodTotals`, `budgetProgress` and `goalProgress`; transfers, including savings contributions, are excluded from income and spending.',
+        why: 'The home screen, reports and budgets can’t disagree with each other.',
+      },
+      {
+        title: 'Safe writes and undo',
+        what: 'Quick successive edits never lose data.',
+        how: 'The store builds each action on the latest data and queues IndexedDB writes one at a time; undo is just another action that restores the removed record.',
+        why: 'Delete-then-undo and fast edits end in a consistent state.',
+      },
+    ],
+    challenges: [
+      { title: 'Matching the design’s figures', text: 'The sample data is reconciled with the design by a test, so balances, October totals, budgets and goal progress match the Figma screens.' },
+      { title: 'No backend by design', text: 'Without an account, data lives in one browser profile; JSON export is provided to keep a copy.' },
+    ],
+    validation: [
+      { label: 'Unit tests', text: '29 Vitest tests (sample-data reconciliation and finance rules) — all passing when run during development.' },
+      { label: 'Build', text: 'Lint and production build pass. The UI was checked by hand in a browser; there are no automated end-to-end tests, and no live demo is published.' },
+    ],
+    limitations: [
+      'No accounts, sync, encryption or backup — data stays in one browser profile.',
+      'Sign-in only sets a local name and email; no password is checked.',
+      'No multi-currency conversion, recurring transactions or custom categories.',
+      'Custom budget periods and share images are not implemented.',
+    ],
+  }),
+  fullStack({
+    slug: 'pulsefit',
+    repo: 'PulseFit',
+    cover: 'pulsefit-cover',
+    coverAlt: 'PulseFit cover: the running app’s Workout Details, Home and Activity screens, with the Next.js, TypeScript and Supabase stack',
+    name: 'PulseFit — Fitness App',
+    industry: 'Fitness tracking web app',
+    scope: ['Next.js app', 'Supabase backend', 'Server-timed sessions', 'Tests'],
+    description:
+      'Fitness tracker — workouts, server-timed sessions, goals, measurements and weekly progress — built with Next.js, TypeScript and Supabase.',
+    overview:
+      'PulseFit is a Next.js web app that implements the PulseFit Figma design. Users browse a workout and exercise library, start, pause and finish timed sessions, build custom workouts, set weekly goals, log body measurements and follow progress statistics. Data is stored in Supabase (Auth, Postgres) with Row Level Security per user.',
+    audience: 'People building a regular workout habit.',
+    role: 'Sole developer — schema, RLS policies and database functions, the data layer, all screens and the test suites. Built with AI coding assistance (Claude Code).',
+    technologies: ['Next.js 16', 'React 19', 'TypeScript', 'Tailwind CSS v4', 'Supabase (Postgres, Auth)', 'zod', 'Vitest', 'PGlite', 'Playwright'],
+    problem:
+      'Workout time and progress can’t depend on the browser: a closed tab, a paused session or a double tap on “Finish” must not produce wrong durations, duplicate sessions or another user’s data.',
+    solution:
+      'Sessions are started, paused and finished by Postgres functions (`start_workout`, `set_workout_paused`, `finish_workout`) that keep time on the server and update stats in one transaction. Custom workouts are saved atomically by `save_workout_template`, and Row Level Security scopes every table to its owner.',
+    implementation: [
+      { title: 'App structure', text: 'Next.js App Router with server components reading through `@supabase/ssr`; signed-out visitors are redirected to sign-in.' },
+      { title: 'Database', text: 'Three migrations: schema with RLS, the workout functions, and the exercise and workout catalog. A local seed adds a demo account.' },
+      { title: 'Features', text: 'Workout library and details, active workout, custom workouts, goals, measurements, progress statistics and in-app notifications created when a workout ends.' },
+    ],
+    engineering: [
+      {
+        title: 'Server-timed sessions',
+        what: 'Workout duration is measured by the database, not the browser.',
+        how: 'Start, pause and finish are functions that record server timestamps; `finish_workout` computes the duration and updates progress in one transaction.',
+        why: 'Reloads, closed tabs and repeated taps can’t inflate or duplicate a session.',
+      },
+      {
+        title: 'Row Level Security per user',
+        what: 'Users only see and change their own data.',
+        how: 'Policies on every user table are checked by database tests that run the migrations on PGlite and act as different users.',
+        why: 'Isolation is enforced by Postgres, not just by the UI.',
+      },
+    ],
+    challenges: [
+      { title: 'Testing SQL without a server', text: 'The migrations run on PGlite (Postgres in WASM) in Vitest, so functions and RLS are tested without a hosted project.' },
+    ],
+    validation: [
+      { label: 'Unit and database tests', text: '35 Vitest tests, including 16 database tests on PGlite covering the workout functions and RLS — all passing when run during development.' },
+      { label: 'End-to-end', text: '5 Playwright tests pass against a local Supabase stack with the seed data. The production build passes. The app is not deployed and no live demo is published.' },
+    ],
+    limitations: [
+      'Not deployed; runs against a local Supabase stack.',
+      'Notifications are in-app only — no push or email reminders.',
+      'Account deletion is not implemented in the app.',
+    ],
+  }),
+  fullStack({
+    slug: 'cravora',
+    repo: 'Cravora',
+    cover: 'cravora-cover',
+    coverAlt: 'Cravora cover: the running app’s Dish Details, Restaurant and Order Tracking screens, with the Next.js, TypeScript and Supabase stack',
+    name: 'Cravora — Food Delivery App',
+    industry: 'Food delivery web app',
+    scope: ['Next.js app', 'Supabase backend', 'Server-side cart & orders', 'Tests'],
+    description:
+      'Food delivery app — menus with dish options, a server-side cart, atomic checkout and an order status flow for restaurants — built with Next.js, TypeScript and Supabase.',
+    overview:
+      'Cravora is a Next.js web app that implements the Cravora Figma design. Customers browse restaurants, choose dish options, build a cart, apply a promo code, check out with cash on delivery or a labelled demo card, and follow the order’s status. Restaurant owners get a minimal order queue to accept, prepare, hand over and deliver orders. Data is stored in Supabase (Auth, Postgres) with Row Level Security.',
+    audience: 'Customers ordering from local restaurants, and restaurant owners handling incoming orders.',
+    role: 'Sole developer — schema, RLS policies and ordering functions, the data layer, all screens and the test suites. Built with AI coding assistance (Claude Code).',
+    technologies: ['Next.js 16', 'React 19', 'TypeScript', 'Tailwind CSS v4', 'Supabase (Postgres, Auth)', 'zod', 'Vitest', 'PGlite', 'Playwright'],
+    problem:
+      'An order can’t trust the browser: required options must be chosen, prices and promo rules must be checked on the server, one cart can’t mix restaurants, a double tap mustn’t place two orders, and only the right restaurant may change an order’s status.',
+    solution:
+      'The cart lives in Postgres and validates dish options and the one-restaurant rule. `quote_cart` prices it on the server, and `place_order` creates the order atomically and idempotently with snapshots of items and prices. `update_order_status` enforces the order state machine, and RLS limits each order to its customer and its restaurant.',
+    implementation: [
+      { title: 'App structure', text: 'Next.js App Router with public browsing, sign-in-protected cart, checkout and orders, and a restaurant-owner order queue.' },
+      { title: 'Database', text: 'Two migrations: schema with RLS, and the ordering functions. A local seed adds restaurants, menus and demo customer and owner accounts.' },
+      { title: 'Features', text: 'Restaurant menus, dish options, cart, the WELCOME10 first-order promo, checkout, order tracking and history, reorder, cancel while pending, ratings, favourites, addresses and notifications.' },
+    ],
+    engineering: [
+      {
+        title: 'Atomic, idempotent checkout',
+        what: 'An order is placed once, at the price the server computes.',
+        how: '`place_order` re-quotes the cart, applies promo rules, writes the order with item and price snapshots and clears the cart in one transaction, keyed for idempotency.',
+        why: 'Retries and double taps can’t create duplicate orders or stale prices.',
+      },
+      {
+        title: 'Order state machine',
+        what: 'Statuses move only along allowed transitions, by the allowed party.',
+        how: '`update_order_status` checks the transition and the caller — restaurant owners advance orders, customers can cancel only while pending — and records each step in the order history.',
+        why: 'Tracking shows real progress and another restaurant can’t touch the order.',
+      },
+    ],
+    challenges: [
+      { title: 'Honest payments and tracking', text: 'No payment provider or courier is connected, so the app offers cash on delivery and a labelled demo card that is never “paid”, and labels the tracking map as illustrative.' },
+    ],
+    validation: [
+      { label: 'Unit and database tests', text: '30 Vitest tests, including 20 database tests on PGlite covering cart rules, pricing, checkout, the state machine and RLS — all passing when run during development.' },
+      { label: 'End-to-end', text: '7 Playwright tests (browsing, ordering, promo rules, owner status flow, isolation between restaurants, cancel and reorder) pass against a local Supabase stack. Lint and production build pass. No live demo is published.' },
+    ],
+    limitations: [
+      'No real payment provider — cash on delivery or a demo card only, with no refunds.',
+      'No live courier location; the tracking map is illustrative and ETAs are restaurant estimates.',
+      'No delivery zones or distance-based fees.',
+      'Recent searches and live support chat are not implemented.',
     ],
   }),
 ]

@@ -408,7 +408,7 @@ export function ProjectPage({ project }: { project: Project }) {
             <div className="grid gap-3 md:grid-cols-2">
               <a
                 href={routes.project(prev.slug)}
-                className="group flex items-center gap-5 rounded-[22px] bg-black/[0.035] p-6 transition-colors hover:bg-black/[0.06] sm:p-8"
+                className="group flex min-w-0 items-center gap-5 rounded-[22px] bg-black/[0.035] p-6 transition-colors hover:bg-black/[0.06] sm:p-8"
               >
                 <span className="grid size-12 shrink-0 place-items-center rounded-full border border-black/15 transition-colors group-hover:border-blue group-hover:text-blue">
                   <ArrowLeft className="size-5" />
@@ -422,7 +422,7 @@ export function ProjectPage({ project }: { project: Project }) {
               </a>
               <a
                 href={routes.project(next.slug)}
-                className="group flex items-center justify-between gap-5 rounded-[22px] bg-black/[0.035] p-6 text-right transition-colors hover:bg-black/[0.06] sm:p-8"
+                className="group flex min-w-0 items-center justify-between gap-5 rounded-[22px] bg-black/[0.035] p-6 text-right transition-colors hover:bg-black/[0.06] sm:p-8"
               >
                 <span className="min-w-0">
                   <span className="block text-[11px] uppercase tracking-[0.08em] text-black/50">Next project</span>

@@ -24,6 +24,11 @@ import { publicUrl } from './site'
  * Nuvora (mobile app, page "Nuvora" — node 2613-2111) has no export in that
  * zip: its cover in /public/covers/app-design/ is composed from three of the
  * file's own frames (Welcome, Dashboard, Finance Overview), unretouched.
+ * Montra (2623-3659), PulseFit (2623-3660) and Cravora (2623-3661) are covered
+ * the same way, from three exported frames of each page:
+ *   Montra   — Transactions, Home, Reports
+ *   PulseFit — Home, Active Workout, Activity
+ *   Cravora  — Restaurant Details, Home, Cart
  *
  * Copy is written from what is visible in each design. The brands and
  * on-screen figures are part of the design concepts — no client results,
@@ -557,6 +562,69 @@ export const appDesigns: Project[] = [
       { title: 'Price shown up front', text: 'Prices always carry their unit (/night), and the full total with taxes and fees appears before payment.' },
       { title: 'Restrained accent', text: 'Ink surfaces and a lime accent used only for key actions, selected states and success — photography carries the colour.' },
       { title: 'Every state designed', text: 'Empty saved stays and trips, loading skeletons, no results, offline and payment-declined screens sit alongside the main flow.' },
+    ],
+  }),
+  design('app-design', {
+    slug: 'montra',
+    name: 'Montra — Personal Finance App',
+    node: '2623-3659',
+    coverAlt: 'Montra mobile app design — transactions, home overview and reports screens',
+    description:
+      'Personal finance app — transactions, budgets, savings goals and reports in one calm money overview.',
+    overview:
+      'Montra is a mobile app concept for tracking personal money. The Figma page covers a home overview with total balance and the month’s spending and income, a searchable transaction list with filters, budgets with progress, savings goals, accounts, notifications, reports with cash flow and spending by category, and profile settings.',
+    audience: 'People who want a clear picture of their own spending, budgets and savings on their phone.',
+    objective: 'Answer “how am I doing this month?” at a glance, then let users drill into any number.',
+    problem:
+      'Money apps often show a wall of numbers without context. Users can’t tell quickly whether they are on track, where the money went, or how this month compares with the last.',
+    solution:
+      'The home screen leads with total balance and a spent-versus-income pair for the month, followed by budgets with an amount left and days remaining. Transactions are grouped by day with income and expense totals and quick filters. Reports pair a cash-flow line chart with a category donut and a plain-language summary of what was kept.',
+    considerations: [
+      { title: 'Numbers with context', text: 'Figures always carry a comparison or a remainder — “left”, “days to go”, change versus last month — so they read as answers.' },
+      { title: 'One strong accent', text: 'Black surfaces and a single yellow accent mark the key figures and actions; categories get their own small colour tags.' },
+      { title: 'Scannable lists', text: 'Transactions are grouped by day with merchant, category, account and time in a consistent two-line row.' },
+    ],
+  }),
+  design('app-design', {
+    slug: 'pulsefit',
+    name: 'PulseFit — Fitness App',
+    node: '2623-3660',
+    coverAlt: 'PulseFit mobile app design — home, active workout and activity screens',
+    description:
+      'Fitness app — planned workouts, a focused active-workout screen and weekly progress tracking.',
+    overview:
+      'PulseFit is a mobile app concept for following workouts and tracking progress. The Figma page covers a home screen with weekly progress and a planned-day calendar, workout details, an active workout with timer and controls, activity and progress statistics, goals and body measurements, saved workouts and profile.',
+    audience: 'People building a regular workout habit who train from their phone.',
+    objective: 'Make it obvious what to do today, keep the workout itself distraction-free, and show progress over the week.',
+    problem:
+      'Fitness apps tend to crowd the screen with feeds and metrics. During a workout users need only the current exercise and the time; afterwards they want to see whether the week is on track.',
+    solution:
+      'The home screen shows a weekly workout ring, a streak and the week’s plan as a date strip, with today’s planned session below. The active-workout screen keeps the timer and controls large, and the activity screen summarises active minutes, the weekly goal and workout count with a period switcher.',
+    considerations: [
+      { title: 'Focus during the workout', text: 'Large photography, a big timer and few controls so the screen can be read mid-exercise.' },
+      { title: 'Progress at a glance', text: 'Rings, a week strip and short labels (“0 of 4 workouts · 4 to go”) turn goals into a clear next step.' },
+      { title: 'Restrained palette', text: 'Monochrome surfaces with an orange accent reserved for streaks, live states and primary actions.' },
+    ],
+  }),
+  design('app-design', {
+    slug: 'cravora',
+    name: 'Cravora — Food Delivery App',
+    node: '2623-3661',
+    coverAlt: 'Cravora mobile app design — restaurant details, home and cart screens',
+    description:
+      'Food delivery app — restaurant discovery, dish options, cart, checkout and order tracking in one clear ordering flow.',
+    overview:
+      'Cravora is a mobile app concept for ordering food for delivery. The Figma page covers a home screen with a delivery address, promotions, cuisines and nearby restaurants, restaurant menus, dish details with options, the cart with a promo code and itemised fees, checkout, order tracking and history, favourites, notifications and profile.',
+    audience: 'People ordering food from local restaurants on their phone.',
+    objective: 'Get from craving to placed order quickly, with the full price clear before checkout.',
+    problem:
+      'Delivery apps often surface fees late and make dish options easy to miss, so the total at checkout comes as a surprise and orders need correcting.',
+    solution:
+      'Restaurant pages show rating, delivery time, fee and minimum order up front, with a categorised menu. The cart lists each dish with its chosen options and quantity, shows an applied promo, and breaks down subtotal, delivery and service fees before a single checkout button carrying the total.',
+    considerations: [
+      { title: 'Price clarity', text: 'Delivery fee, service fee and discounts are itemised in the cart, and the checkout button repeats the total.' },
+      { title: 'Appetite-led visuals', text: 'Large food photography with a lime accent used for add buttons, promotions and the active tab.' },
+      { title: 'One-handed ordering', text: 'Add and quantity controls sit on the right of each row, and the primary action stays at the bottom of the screen.' },
     ],
   }),
 ]
