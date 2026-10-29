@@ -117,6 +117,8 @@ export interface Service {
   number: string
   title: string
   shortTitle: string
+  /** Optional longer heading on the service's collection page (defaults to `title`). */
+  heading?: string
   description: string
   /** Optional introduction shown on the service's collection page. */
   intro?: string

@@ -5,8 +5,9 @@ export const services: Service[] = [
   {
     slug: 'ui-ux',
     number: '01',
-    title: 'Website UI/UX Design',
+    title: 'UI/UX Design',
     shortTitle: 'UI/UX',
+    heading: 'UI/UX Design for Web, Mobile & Games',
     description:
       'User-centered interfaces for websites, web dashboards, and mobile apps — from user flows and wireframes to interactive prototypes, design systems, and polished responsive experiences.',
     icon: PenTool,
@@ -23,8 +24,9 @@ export const services: Service[] = [
   {
     slug: 'full-stack',
     number: '03',
-    title: 'Full-Stack Web Development',
+    title: 'Full-Stack Development',
     shortTitle: 'Full-Stack',
+    heading: 'Full-Stack Development for Web, Mobile & Games',
     description:
       'End-to-end development for websites, interactive web dashboards, and mobile apps — combining responsive interfaces, backend systems, databases, authentication, and API integrations.',
     icon: Code2,

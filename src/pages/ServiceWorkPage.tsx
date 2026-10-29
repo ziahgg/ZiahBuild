@@ -33,7 +33,7 @@ export function ServiceWorkPage({ service }: { service: Service }) {
                 Service {service.number} · {work.length} {work.length === 1 ? 'project' : 'projects'}
               </Eyebrow>
               <h1 id="service-title" className="display mt-5 text-[clamp(2.4rem,5.5vw,4.5rem)]">
-                {service.title}
+                {service.heading ?? service.title}
                 <br />
                 <span className="text-black/30">Selected Work.</span>
               </h1>
