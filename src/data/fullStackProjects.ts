@@ -20,6 +20,9 @@ import { publicUrl } from './site'
  * Playwright suites were run against a local Supabase stack. Montra has no
  * end-to-end tests. Their covers use screens captured from the running apps
  * with seed data.
+ * Nestora and Taskora follow the same pattern: their Vitest suites (unit plus
+ * PGlite database tests) and Playwright suites were run against a local
+ * Supabase stack; neither is deployed. Covers use screens from the running apps.
  *
  * Covers come from ZiahBuild-Full-Stack-Covers.zip (original 1920×1080 PNGs)
  * in /public/covers/full-stack/, plus a 1280px JPEG for grids.
@@ -647,6 +650,110 @@ export const fullStackProjects: Project[] = [
       'No live courier location; the tracking map is illustrative and ETAs are restaurant estimates.',
       'No delivery zones or distance-based fees.',
       'Recent searches and live support chat are not implemented.',
+    ],
+  }),
+  fullStack({
+    slug: 'nestora',
+    repo: 'Nestora',
+    cover: 'nestora-cover',
+    coverAlt: 'Nestora cover: the running app’s Search Results, Discover and Property Details screens, with the Next.js, TypeScript and Supabase stack',
+    name: 'Nestora — Property Rental App',
+    industry: 'Property rental web app',
+    scope: ['Next.js app', 'Supabase backend', 'Inquiries & viewings', 'Tests'],
+    description:
+      'Property rental platform — home discovery with filters, rental terms, saved and compared homes, agent inquiries and viewing bookings — built with Next.js, TypeScript and Supabase.',
+    overview:
+      'Nestora is a Next.js web app that implements the Nestora Figma design for long-term rentals. Renters search and filter homes (list or illustrative map), read rental terms, save and compare up to three homes, send the listing agent an inquiry and book an in-person or video viewing from the agent’s open times. Agents answer inquiries in a minimal queue. Data is stored in Supabase (Auth, Postgres, Storage) with Row Level Security.',
+    audience: 'Prospective tenants, and listing agents who answer inquiries and host viewings.',
+    role: 'Sole developer — schema, RLS policies and workflow functions, the data layer, all screens and the test suites. Built with AI coding assistance (Claude Code).',
+    technologies: ['Next.js 16', 'React 19', 'TypeScript', 'Tailwind CSS v4', 'Supabase (Postgres, Auth, Storage)', 'zod', 'Vitest', 'PGlite', 'Playwright'],
+    problem:
+      'Viewing times and inquiry states can’t be trusted to the browser: two renters mustn’t book the same agent slot, a double tap mustn’t send two inquiries, and renters and agents must only see their own records.',
+    solution:
+      '`request_viewing` checks the slot against the agent’s weekly hours, days off and existing bookings under a per-agent lock, with a unique index as the final guard. `send_inquiry` is idempotent and allows one open inquiry per home, and each step (reply, withdraw, close, cancel) is a function that checks the caller and the current state. RLS limits inquiries and viewings to the renter and the listing agent.',
+    implementation: [
+      { title: 'App structure', text: 'Next.js App Router: public discovery, search and listing pages; sign-in-protected saved homes, compare, inquiries, viewings, notifications and profile; a minimal agent queue.' },
+      { title: 'Database', text: 'Three migrations: schema with RLS, the inquiry and viewing functions, and an avatars storage bucket. A local seed adds sample listings, agents and a demo renter.' },
+      { title: 'Features', text: 'Filters in the URL with a live result count, gallery, rental terms, compare with “Best” values, recently viewed, inquiry timeline, viewing reschedule and cancel, .ics calendar files and in-app notifications.' },
+    ],
+    engineering: [
+      {
+        title: 'No double-booked viewings',
+        what: 'An agent’s slot can be booked once.',
+        how: '`viewing_slots` returns each slot with a reason when it isn’t available; `request_viewing` re-checks it under an advisory lock and a partial unique index on (agent, start time).',
+        why: 'Two renters picking the same time at once get one booking and one clear “slot taken” message.',
+      },
+      {
+        title: 'Honest rental terms',
+        what: 'Unknown terms are never guessed.',
+        how: 'Deposit, lease, pets, furnishing and utilities are nullable and render as “Not specified”; listings are labelled as sample data.',
+        why: 'Renters can see exactly what the agent has and hasn’t shared.',
+      },
+    ],
+    challenges: [
+      { title: 'No messaging provider', text: 'No email or SMS is sent: inquiries and viewings appear in the agent’s Nestora queue, and notifications are in-app only.' },
+    ],
+    validation: [
+      { label: 'Unit and database tests', text: '42 Vitest tests, including 22 database tests on PGlite covering RLS, inquiries, slot checks, double booking, rescheduling and notifications — all passing when run during development.' },
+      { label: 'End-to-end', text: '6 Playwright tests (browse, search and filter; save, compare and an inquiry with validation; book, reschedule and cancel a viewing; agent reply; access isolation; withdraw and unsave) pass against a local Supabase stack. Lint and production build pass. The app is not deployed.' },
+    ],
+    limitations: [
+      'Listings, agents and prices are sample data; most listing photos are small crops from the Figma exports.',
+      'Maps are illustrative, not a map SDK.',
+      'No payments, deposits, applications or leases.',
+      'No email, SMS or push notifications; viewing reminders aren’t scheduled automatically.',
+    ],
+  }),
+  fullStack({
+    slug: 'taskora',
+    repo: 'Taskora',
+    cover: 'taskora-cover',
+    coverAlt: 'Taskora cover: the running app’s Task Details, Home and Project Details screens, with the Next.js, TypeScript and Supabase stack',
+    name: 'Taskora — Team Productivity App',
+    industry: 'Team productivity web app',
+    scope: ['Next.js app', 'Supabase backend', 'Workspaces & roles', 'Tests'],
+    description:
+      'Team productivity platform — workspaces and roles, projects, tasks and subtasks, a board, a calendar, comments and an activity log — built with Next.js, TypeScript and Supabase.',
+    overview:
+      'Taskora is a Next.js web app that implements the Taskora Figma design. Teams work in workspaces with owner, admin, editor and viewer roles and join through one-time invite links. Projects (team or private) hold tasks with one level of subtasks, labels, assignees, priorities and due dates, shown as lists, a drag-and-drop board and a calendar. Comments support @mentions, every change lands in an activity log, and notifications are in-app. Data is stored in Supabase (Auth, Postgres, Storage) with Row Level Security.',
+    audience: 'Small teams that plan, assign and track work together.',
+    role: 'Sole developer — schema, RLS policies, triggers and workspace functions, the data layer, all screens and the test suites. Built with AI coding assistance (Claude Code).',
+    technologies: ['Next.js 16', 'React 19', 'TypeScript', 'Tailwind CSS v4', 'Supabase (Postgres, Auth, Storage)', 'zod', 'Vitest', 'PGlite', 'Playwright'],
+    problem:
+      'A shared task tool must keep teams apart and roles honest: knowing a workspace’s id mustn’t grant access, nobody can promote themselves, subtasks can’t nest or drift into other projects, and the history of who changed what must not be editable.',
+    solution:
+      'Every table has RLS built on one role check. Creating workspaces, invitations, role changes and member removal run as security-definer functions that check the caller’s rank. Task triggers enforce one subtask level in the parent’s project, that assignees can open the project, and completion timestamps, and they write the activity log and notifications — so every client path follows the same rules.',
+    implementation: [
+      { title: 'App structure', text: 'Next.js App Router with a per-request workspace context (membership, role, today in the user’s time zone); server actions validate with shared zod schemas.' },
+      { title: 'Database', text: 'Three migrations: schema with RLS and column grants, workflow triggers and functions, and an avatars storage bucket. A local seed adds the design’s sample team and projects.' },
+      { title: 'Features', text: 'Home “My Day”, search with URL filters, project progress and health, task list grouping, board with drag-and-drop and a keyboard move menu, calendar, My Tasks, overdue bulk actions, team workload, comments with @mentions and notifications.' },
+    ],
+    engineering: [
+      {
+        title: 'Invite links that can’t be reused',
+        what: 'Joining a workspace needs an invitation for your own email.',
+        how: '`create_invitation` stores only a SHA-256 of the token; `accept_invitation` checks expiry, revocation, prior use and that the signed-in email matches, then adds the membership.',
+        why: 'A leaked or guessed link doesn’t let a different account in, and a new invite revokes the old link.',
+      },
+      {
+        title: 'Rules in triggers',
+        what: 'Hierarchy, access and audit are enforced in the database.',
+        how: '`tasks_before_write` rejects nested subtasks, cross-project parents and assignees without access, sets `completed_at`, and moves subtasks with their parent; an after-trigger records activity and notifications.',
+        why: 'Board drags, bulk actions and forms all follow the same rules, and the activity log can’t be rewritten by clients.',
+      },
+    ],
+    challenges: [
+      { title: 'No messaging provider', text: 'Invitations are one-time links the inviter shares; notifications are in-app only, and deadline reminders are created when the app is opened.' },
+    ],
+    validation: [
+      { label: 'Unit and database tests', text: '34 Vitest tests, including 20 database tests on PGlite covering workspace isolation, invitations, role limits, hierarchy, assignee access, comments and notifications — all passing when run during development.' },
+      { label: 'End-to-end', text: '7 Playwright tests (sign-up with email confirmation, onboarding, project/task/subtask flow, comments and reload, cross-workspace 404, invite acceptance, board moves and viewer limits) pass against a local Supabase stack. Lint and production build pass. The app is not deployed.' },
+    ],
+    limitations: [
+      'No realtime updates — other people’s changes appear on the next navigation or refresh.',
+      'No email, push or chat; invite links are shared by hand.',
+      'One assignee per task; no attachments, recurring tasks or custom statuses.',
+      'Deleted tasks can’t be restored.',
     ],
   }),
 ]

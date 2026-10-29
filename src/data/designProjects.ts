@@ -29,6 +29,11 @@ import { publicUrl } from './site'
  *   Montra   — Transactions, Home, Reports
  *   PulseFit — Home, Active Workout, Activity
  *   Cravora  — Restaurant Details, Home, Cart
+ * Nestora (274-5177) and Taskora (274-5178) are pages in the separate
+ * "ziahdesign" file; their covers use three frames from each page's export
+ * (Nestora_Portfolio_Export.zip, Taskora_Portfolio_Export.zip):
+ *   Nestora  — Search Results, Discover, Property Details
+ *   Taskora  — Task Details, Home, Kanban
  *
  * Copy is written from what is visible in each design. The brands and
  * on-screen figures are part of the design concepts — no client results,
@@ -36,6 +41,8 @@ import { publicUrl } from './site'
  */
 
 const FIGMA = 'https://www.figma.com/design/olXEM3pl6a0vHZU4HZ8rFz/Ziah-s-Portfolio---2026?node-id='
+/** Nestora and Taskora live in the separate "ziahdesign" file. */
+const ZIAHDESIGN = 'https://www.figma.com/design/BaGGNADHasoA3oYRZ1L3mv/ziahdesign?node-id='
 
 type Category = 'website' | 'social-media' | 'app-design'
 
@@ -46,6 +53,8 @@ interface DesignInput {
   brand?: string
   /** Figma node id, e.g. "2603-115". */
   node: string
+  /** Base URL of another Figma file (defaults to the portfolio file). */
+  figmaFile?: string
   description: string
   overview: string
   audience: string
@@ -81,7 +90,7 @@ const meta: Record<Category, { service: ServiceSlug; category: string; scope: st
 const placeholders = { website: 'website', 'social-media': 'social', 'app-design': 'mobile' } as const
 
 function design(category: Category, input: DesignInput): Project {
-  const { node, slug, coverAlt, ...rest } = input
+  const { node, slug, coverAlt, figmaFile, ...rest } = input
   const m = meta[category]
   const file = `covers/${category}/${slug}-${category}-cover`
   return {
@@ -91,7 +100,7 @@ function design(category: Category, input: DesignInput): Project {
     kind: 'Concept',
     scope: m.scope,
     services: [m.service],
-    figmaUrl: `${FIGMA}${node}`,
+    figmaUrl: `${figmaFile ?? FIGMA}${node}`,
     technologies: [],
     media: {
       image: publicUrl(`${file}.png`),
@@ -625,6 +634,50 @@ export const appDesigns: Project[] = [
       { title: 'Price clarity', text: 'Delivery fee, service fee and discounts are itemised in the cart, and the checkout button repeats the total.' },
       { title: 'Appetite-led visuals', text: 'Large food photography with a lime accent used for add buttons, promotions and the active tab.' },
       { title: 'One-handed ordering', text: 'Add and quantity controls sit on the right of each row, and the primary action stays at the bottom of the screen.' },
+    ],
+  }),
+  design('app-design', {
+    slug: 'nestora',
+    name: 'Nestora — Property Rental App',
+    node: '274-5177',
+    figmaFile: ZIAHDESIGN,
+    coverAlt: 'Nestora mobile app design — search results, discover and property details screens',
+    description:
+      'Property rental platform concept — home discovery, rental terms and a streamlined path from search to contacting the agent and booking a viewing.',
+    overview:
+      'Nestora is a mobile app concept for finding a home to rent. The Figma page covers discovery with featured homes and neighborhoods, search with filters and a map view, property details with a gallery and rental terms, saved homes, side-by-side comparison, recently viewed, contacting the listing agent, inquiry tracking, viewing appointments, notifications, profile and settings — including loading, empty, error and validation states.',
+    audience: 'Prospective tenants looking for a long-term rental, and the agents who list the homes.',
+    objective: 'Help renters judge a home quickly and take the next step — ask the agent or book a viewing — without hunting for the terms.',
+    problem:
+      'Rental listings often hide key terms like deposit, lease length and pet rules, or fill gaps with guesses. Renters bounce between listings, lose track of homes they liked and can’t tell whether an agent has replied.',
+    solution:
+      'Listings lead with monthly rent, beds, baths and size, and a rental-terms block shows deposit, lease, furnishing, pets and utilities — anything unknown reads “Not specified”. Saved homes and a three-home comparison keep the shortlist in one place, and inquiries and viewings each have a status timeline.',
+    considerations: [
+      { title: 'Never invented terms', text: 'Unknown details are labelled “Not specified”, and every listing carries a sample-listing tag in this concept.' },
+      { title: 'Warm and restrained', text: 'Warm neutral surfaces with ink actions; amber marks location and selection, and red is reserved for favourites and errors.' },
+      { title: 'Every state designed', text: 'Loading, empty, error, validation, sending and send-failed states sit alongside the main flows.' },
+    ],
+  }),
+  design('app-design', {
+    slug: 'taskora',
+    name: 'Taskora — Team Productivity App',
+    node: '274-5178',
+    figmaFile: ZIAHDESIGN,
+    coverAlt: 'Taskora mobile app design — task details, home and board screens',
+    description:
+      'Team productivity platform concept — organise projects, manage tasks and subtasks, track progress and collaborate across the team.',
+    overview:
+      'Taskora is a mobile app concept for small teams. The Figma page covers a home screen with “My Day” and overdue alerts, search with filters, projects with progress and health, project details and members, tasks and subtasks, a kanban board, a calendar, My Tasks and overdue views, team workload, comments and activity, notifications, profile and settings — 71 screens and states, built on a token-based design system.',
+    audience: 'Small product, design and marketing teams who plan and track work together.',
+    objective: 'Answer at a glance what needs attention today, what the team is working on, what is overdue or blocked, and how each project is doing.',
+    problem:
+      'Task tools get noisy: status, priority and deadlines blur together, progress is hard to read, and it isn’t clear who is waiting on whom.',
+    solution:
+      'Every task shows its project, due date, priority and assignee in one consistent row. Projects carry a progress bar and an on-track / at-risk / off-track badge, tasks break into subtasks that roll up into progress, and the board, calendar and My Tasks views show the same work from different angles.',
+    considerations: [
+      { title: 'Colour never alone', text: 'Status, priority and health badges always pair colour with a label and an icon.' },
+      { title: 'One hierarchy', text: 'Project → task → subtask is used on every screen, so progress reads the same everywhere.' },
+      { title: 'States included', text: 'Validation errors, save failures with retry, empty projects, empty days and “all caught up” are designed, not left to chance.' },
     ],
   }),
 ]
