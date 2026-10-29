@@ -8,7 +8,7 @@ export const services: Service[] = [
     title: 'Website UI/UX Design',
     shortTitle: 'UI/UX',
     description:
-      'Website interfaces designed in Figma — user flows, wireframes, prototypes, design systems, and polished desktop and mobile layouts.',
+      'User-centered interfaces for websites, web dashboards, and mobile apps — from user flows and wireframes to interactive prototypes, design systems, and polished responsive experiences.',
     icon: PenTool,
   },
   {
@@ -26,7 +26,7 @@ export const services: Service[] = [
     title: 'Full-Stack Web Development',
     shortTitle: 'Full-Stack',
     description:
-      'Responsive frontends, backend functionality where appropriate, databases, authentication, and API integrations.',
+      'End-to-end development for websites, interactive web dashboards, and mobile apps — combining responsive interfaces, backend systems, databases, authentication, and API integrations.',
     icon: Code2,
   },
   {
